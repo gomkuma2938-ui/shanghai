@@ -16,6 +16,9 @@ function renderLocCard(cat, idx, btn) {
     const lines = item.sub.match(/\d+/g) || [];
     const lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
+    // 설명(desc)이 데이터에 있을 경우 렌더링하도록 복구
+    const descHtml = item.desc ? `<div class="desc">${item.desc.replace(/\n\n/g, '<p></p>')}</div>` : "";
+    
     document.getElementById('app').innerHTML = `
         <div class="card" onclick="copy('${item.cn}')">
             <div>
@@ -29,6 +32,7 @@ function renderLocCard(cat, idx, btn) {
                 <span class="station-text">${krPart} ${cnPart}</span>
                 ${lineTags}
             </div>
+            ${descHtml}
         </div>`;
 }
 
@@ -83,7 +87,6 @@ function renderMenu(res, cat, btn) {
 }
 
 window.onload = () => {
-    // 푸터 버튼들에 함수 연결
     document.getElementById('btn-loc').onclick = function() { showLocationTab(this); };
     document.getElementById('btn-menu').onclick = function() { showMenuTab(this); };
     showLocationTab(document.getElementById('btn-loc'));
