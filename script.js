@@ -1,13 +1,23 @@
 function copy(text) { navigator.clipboard.writeText(text); alert("복사: " + text); }
-function getCnSub(text) { const m = text.match(/\((.*?)\)/); return m ? m[1] : text; }
 
-function formatSubway(text) {
-    const lineMatch = text.match(/(\d+)호선/);
-    if (!lineMatch) return text;
-    const lineNum = lineMatch[1];
-    const stationName = text.split(' ')[0];
-    // 지하철역 이름만 별도로 복사 가능하도록 span에 onclick 추가
-    return `<div class="subway-wrapper"><span class="subway-tag line-${lineNum}">${lineNum}</span><span onclick="copy('${stationName}')" style="cursor:pointer;">${stationName}</span></div>`;
+// 역 정보 처리 로직: 환승역과 한글/중국어 병기 지원
+function formatSubway(subText) {
+    // 예: "2호선, 10호선 난징동루역(南京东路)"
+    const stationMatch = subText.match(/(.*?)역\((.*?)\)/);
+    const stationKr = stationMatch ? stationMatch[1] : subText.split('역')[0];
+    const stationCn = stationMatch ? stationMatch[2] : "";
+    
+    const lines = subText.match(/\d+(?=호선)/g) || [];
+    
+    const lineHtml = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
+    
+    return `
+        <div class="subway-container">
+            <div class="line-list" style="margin-bottom: 5px;">${lineHtml}</div>
+            <div onclick="copy('${stationKr} ${stationCn}')" style="cursor:pointer; font-weight:700;">
+                ${stationKr} <span style="font-size:12px; color:#666;">(${stationCn})</span>
+            </div>
+        </div>`;
 }
 
 // 위치 탭
