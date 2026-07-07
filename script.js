@@ -9,11 +9,10 @@ function getCnSub(text) {
     return m ? m[1] : text; 
 }
 
-// 1. 위치 탭 클릭 시 서브 메뉴(호텔/관광지/식당) 생성
+// 1. 위치 탭 클릭 시 서브 메뉴 생성
 function showSub(type) {
     const sub = document.getElementById('sub-menu');
-    const app = document.getElementById('app');
-    app.innerHTML = ''; // 기존 콘텐츠 초기화
+    document.getElementById('app').innerHTML = ''; 
 
     if(type === 'location') {
         sub.innerHTML = `
@@ -26,14 +25,22 @@ function showSub(type) {
 
 // 2. 2차 탭 클릭 시 데이터 렌더링
 function render(cat) {
-    // 각 데이터 변수가 전역에 선언되어 있어야 정상 작동합니다.
-    const dataMap = { 'hotel': hotelData, 'tour': tourData, 'restaurant': restaurantData };
+    // 윈도우 객체에서 데이터 변수를 안전하게 찾음
+    const dataMap = { 
+        'hotel': window.hotelData, 
+        'tour': window.tourData, 
+        'restaurant': window.restaurantData 
+    };
+    
     const list = dataMap[cat];
     
-    if (!list) return;
+    if (!list) {
+        console.error(cat + " 데이터를 찾을 수 없습니다. 파일 로드 상태를 확인하세요.");
+        alert("데이터를 불러오지 못했습니다.");
+        return;
+    }
 
     const app = document.getElementById('app');
-    // 관광지 전용 슬라이드 스타일 적용
     app.style.display = 'flex';
     app.style.flexDirection = (cat === 'tour') ? 'row' : 'column';
     app.style.overflowX = (cat === 'tour') ? 'auto' : 'visible';
