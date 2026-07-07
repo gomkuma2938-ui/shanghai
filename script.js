@@ -1,4 +1,3 @@
-// 식당 ID와 화면에 표시할 이름 매칭
 const resName = {
     jiajia: '지아지아탕바오',
     dahuchun: '다후춘',
@@ -6,7 +5,6 @@ const resName = {
     jiangbian: '강변성외'
 };
 
-// 복사 함수
 function copy(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
@@ -14,13 +12,11 @@ function copy(text) {
     });
 }
 
-// [초기 실행] 페이지 열리면 호텔/공항 탭을 바로 실행
 window.onload = () => {
     const btnLoc = document.getElementById('btn-loc');
     if (btnLoc) showLocationTab(btnLoc);
 };
 
-// --- 위치(호텔/관광지/식당) 렌더링 함수 ---
 function renderLocCard(cat, idx, btn) {
     const list = window[cat + 'Data'];
     if (!list || !list[idx]) return;
@@ -47,11 +43,20 @@ function renderLocCard(cat, idx, btn) {
     let descHtml = "";
     if (item.desc) {
         const lines = item.desc.split('\n');
-        const firstLine = lines[0];
-        const remainingText = lines.slice(1).join('\n').trim();
-        const bodyHtml = remainingText.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+        const firstLine = lines[0]; // 제목(첫 줄)
+        const remainingText = lines.slice(1).join('\n').trim(); // 나머지 본문
         
-        descHtml = `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
+        // 온점이 아니라 실제 줄바꿈(\n)을 기준으로 문단을 나눔
+        const bodyHtml = remainingText.split('\n').map(p => {
+            if (!p.trim()) return '';
+            return `<p class="desc-para">${p.trim()}</p>`; 
+        }).join('');
+        
+        descHtml = `
+            <div class="desc">
+                <div class="desc-header">${firstLine}</div>
+                <div class="desc-body">${bodyHtml}</div>
+            </div>`;
     }
     
     document.getElementById('app').innerHTML = `
@@ -60,11 +65,11 @@ function renderLocCard(cat, idx, btn) {
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
-            <span class="label-small">주소 (클릭 시 복사)</span>
+            <span class="label-small">주소</span>
             <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
-            <span class="label-small">지하철 (클릭 시 중국어 역명 복사)</span>
+            <span class="label-small">지하철</span>
             <div class="subway-line" onclick="copy('${cnPart}')">
-                <span class="kr-sub">${krPart}</span><span class="cn-sub">${cnPart}</span>
+                <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
             ${descHtml}
@@ -92,53 +97,39 @@ function renderLocation(cat, btn) {
     renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
 }
 
-// --- 메뉴(식당 음식) 렌더링 함수 ---
 function showMenuTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // 데이터 로드 확인
-    if (!window.menuData) {
-        alert("menu_data.js 파일을 찾을 수 없거나 데이터가 비어있습니다.");
-        return;
-    }
-    
+    if (!window.menuData) { alert("menu_data.js 파일을 찾을 수 없거나 데이터가 비어있습니다."); return; }
     const resKeys = Object.keys(window.menuData);
     document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
         <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>`).join('');
-    
-    // 첫 번째 식당 자동 로드
     loadMenu(resKeys[0], document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
 function loadMenu(res, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
     const currentResData = window.menuData[res];
     if(!currentResData) return;
-
     const cats = Object.keys(currentResData);
     document.getElementById('menu-depth3').innerHTML = cats.map(c => `
         <button onclick="renderMenu('${res}', '${c}', this)">${c}</button>`).join('');
-    
-    // 첫 번째 카테고리 자동 로드
     renderMenu(res, cats[0], document.querySelector('#menu-depth3 button'));
 }
 
 function renderMenu(res, cat, btn) {
     document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
-    
     const items = window.menuData[res][cat];
     document.getElementById('app').innerHTML = items.map(i => `
         <div class="menu-card" onclick="copy('${i.cn}')">
             <div class="text-area">
-                <div class="cn-big">${i.cn} <span class="py-small">${i.py}</span></div>
-                <div class="kr-read">${i.kr_read}</div>
-                <div class="kr-med">${i.kr}</div>
+                <div class="cn-big-menu">${i.cn}</div>
+                <div class="kr-med-menu">${i.kr}</div>
+                <div class="py-read-row">${i.py} / ${i.kr_read}</div>
             </div>
-            <div class="price-circle">¥${i.price}</div>
+            <div class="price-circle-fill">¥${i.price}</div>
         </div>`).join('');
     window.scrollTo(0, 0);
 }
