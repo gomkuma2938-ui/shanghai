@@ -1,4 +1,4 @@
-const hotelData = [
+window.hotelData = [
     { 
         kr: '진링 퍼플 마운틴 호텔', 
         cn: '金陵紫金山大酒店', 
