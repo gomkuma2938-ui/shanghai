@@ -16,8 +16,8 @@ function renderLocCard(cat, idx, btn) {
     const lines = item.sub.match(/\d+/g) || [];
     const lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
-    // 데이터에 desc가 없는 경우를 대비해 안전하게 처리
-    const descHtml = (item.desc) ? `<div class="desc">${item.desc.replace(/\n\n/g, '<p></p>')}</div>` : "";
+    // 개행 문자(\n\n)를 <p> 태그로 변환하여 문단 간격 생성
+    const descHtml = item.desc ? `<div class="desc">${item.desc.replace(/\n\n/g, '<p></p>')}</div>` : "";
     
     document.getElementById('app').innerHTML = `
         <div class="card" onclick="copy('${item.cn}')">
@@ -29,7 +29,8 @@ function renderLocCard(cat, idx, btn) {
             <div class="content-text" onclick="event.stopPropagation(); copy('${item.addr}')">${item.addr}</div>
             <span class="label-small">지하철</span>
             <div class="subway-line">
-                <span class="station-text">${krPart} ${cnPart}</span>
+                <span class="kr-sub">${krPart}</span>
+                <span class="cn-sub">${cnPart}</span>
                 ${lineTags}
             </div>
             ${descHtml}
@@ -58,11 +59,16 @@ function renderLocation(cat, btn) {
 function showMenuTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    if (typeof menuData === 'undefined') return;
+    
+    // 메뉴 데이터가 로드되어 있는지 확인
+    if (typeof menuData === 'undefined') { console.error("menuData 없음"); return; }
     
     document.getElementById('menu-depth2').innerHTML = Object.keys(menuData).map(res => `
         <button onclick="loadMenu('${res}', this)">${resName[res]}</button>`).join('');
-    loadMenu(Object.keys(menuData)[0], document.querySelector('#menu-depth2 button'));
+    
+    // 첫 번째 식당 자동 로드
+    const firstRes = Object.keys(menuData)[0];
+    loadMenu(firstRes, document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
 function loadMenu(res, btn) {
@@ -87,8 +93,3 @@ function renderMenu(res, cat, btn) {
             <div class="price-circle">¥${i.price}</div>
         </div>`).join('');
 }
-
-// 초기화: 페이지 로딩 시 첫 탭 강제 활성화
-window.onload = () => {
-    showLocationTab(document.getElementById('btn-loc'));
-};
