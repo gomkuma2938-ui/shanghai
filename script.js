@@ -6,7 +6,8 @@ function formatSubway(text) {
     if (!lineMatch) return text;
     const lineNum = lineMatch[1];
     const stationName = text.split(' ')[0];
-    return `<div class="subway-wrapper"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
+    // 지하철역 이름만 별도로 복사 가능하도록 span에 onclick 추가
+    return `<div class="subway-wrapper"><span class="subway-tag line-${lineNum}">${lineNum}</span><span onclick="copy('${stationName}')" style="cursor:pointer;">${stationName}</span></div>`;
 }
 
 // 위치 탭
@@ -28,18 +29,17 @@ function renderLocCard(cat, idx, btn) {
     if(btn) btn.classList.add('active');
     const item = window[cat + 'Data'][idx];
     
-    // 설명(desc) 필드가 있을 경우 추가 렌더링
     const descHtml = item.desc ? `<div class="label" style="font-size:14px; color:#777; margin-top:15px; font-style:italic;">"${item.desc}"</div>` : '';
     
     document.getElementById('app').innerHTML = `
-        <div class="card" onclick="copy('${item.cn}')">
-            <div>
+        <div class="card">
+            <div onclick="copy('${item.cn}')">
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
-                <div class="label" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500;">주소: ${item.addr}</div>
-                <div class="label" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500;">지하철: ${formatSubway(item.sub)}</div>
-                ${descHtml}
             </div>
+            <div class="label" onclick="copy('${item.addr}')" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500; cursor:pointer;">주소: ${item.addr}</div>
+            <div class="label" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500;">지하철: ${formatSubway(item.sub)}</div>
+            ${descHtml}
         </div>`;
 }
 
