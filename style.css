@@ -1,8 +1,26 @@
-body { font-family: sans-serif; margin: 0; padding-bottom: 120px; background: #f4f4f4; }
-#sub-menu { display: flex; background: #eee; padding: 10px; gap: 5px; }
-#sub-menu button { flex: 1; padding: 10px; border: 1px solid #ccc; background: white; cursor: pointer; }
-.card { background: white; padding: 20px; margin: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.label { font-size: 14px; color: #888; margin-top: 10px; }
-.data { font-size: 20px; font-weight: bold; padding: 8px 0; border-bottom: 1px solid #eee; cursor: pointer; background: #fafafa; }
-.footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #333; height: 60px; }
-.footer button { flex: 1; border: none; font-size: 18px; color: white; background: #333; cursor: pointer; }
+/* Noto Sans CJK 폰트 적용 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&family=Noto+Sans+SC:wght@300;700&display=swap');
+
+body { 
+    font-family: 'Noto+Sans+KR', 'Noto+Sans+SC', sans-serif; 
+    margin: 0; padding-bottom: 80px; background: #f4f4f4; 
+}
+
+/* 카드 및 데이터 스타일 */
+.card { background: white; padding: 20px; margin: 15px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.label { font-size: 12px; color: #999; margin-bottom: 4px; }
+.kr-text { font-size: 16px; font-weight: 300; color: #333; margin-bottom: 4px; }
+.cn-text { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 15px; }
+
+/* 하단 메인 메뉴 */
+.footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 60px; }
+.footer button { flex: 1; border: none; background: white; font-weight: bold; }
+.footer button:not(:last-child) { border-right: 1px solid #eee; }
+
+/* 2차 탭 (슬라이드) */
+#sub-menu { display: flex; overflow-x: auto; padding: 10px; background: #fff; border-bottom: 1px solid #eee; white-space: nowrap; }
+#sub-menu button { padding: 8px 20px; margin-right: 8px; border-radius: 20px; border: 1px solid #333; background: white; }
+
+/* 관광지 카드 슬라이드 컨테이너 */
+#app { display: flex; flex-direction: column; }
+.card.tour-mode { min-width: 90vw; scroll-snap-align: center; }
