@@ -1,24 +1,3 @@
-// 1. 복사 기능
-function copy(text) { 
-    navigator.clipboard.writeText(text); 
-    alert("복사 완료: " + text); 
-}
-
-// 2. 중국어 역명 추출
-function getCnSub(text) { 
-    const m = text.match(/\((.*?)\)/); 
-    return m ? m[1] : text; 
-}
-
-// 3. 지하철 아이콘 생성
-function formatSubway(text) {
-    const lineMatch = text.match(/(\d+)호선/);
-    if (!lineMatch) return text;
-    const lineNum = lineMatch[1];
-    const stationName = text.split(' ')[0];
-    return `<div style="display: flex; align-items: center; gap: 5px;"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
-}
-
 // 4. 위치 탭 서브 메뉴 생성
 function showSub(type) {
     const sub = document.getElementById('sub-menu');
@@ -28,41 +7,44 @@ function showSub(type) {
 
     if(type === 'location') {
         sub.innerHTML = `
-            <button onclick="render('hotel')">호텔</button>
-            <button onclick="render('tour')">관광지</button>
-            <button onclick="render('restaurant')">식당</button>
+            <button onclick="renderList('hotel')">호텔</button>
+            <button onclick="renderList('tour')">관광지</button>
+            <button onclick="renderList('restaurant')">식당</button>
         `;
     }
 }
 
-// 5. 렌더링 함수
-function render(cat) {
-    const dataMap = { 
-        'hotel': window.hotelData, 
-        'tour': window.tourData, 
-        'restaurant': window.restaurantData 
-    };
-    
-    const list = dataMap[cat];
+// 5. [서브 메뉴] 클릭 시 해당 카테고리의 이름들(가로 스크롤)을 렌더링
+function renderList(cat) {
+    const list = window[cat + 'Data'];
+    const sub = document.getElementById('sub-menu');
     const app = document.getElementById('app');
+    
+    app.innerHTML = ''; // 기존 카드 초기화
 
-    if (!list) {
-        alert("데이터가 아직 로드되지 않았습니다.");
-        return;
-    }
-
-    // 모드 설정
-    app.className = (cat === 'tour') ? 'tour-mode-container' : '';
-
-    app.innerHTML = list.map(i => `
-        <div class="card ${cat === 'tour' ? 'tour-mode' : ''}">
-            <div class="label">명칭</div>
-            <div class="kr-text" onclick="copy('${i.cn}')">${i.kr}</div>
-            <div class="cn-text" onclick="copy('${i.cn}')">${i.cn}</div>
-            <div class="label">주소</div>
-            <div class="data" onclick="copy('${i.addr}')">${i.addr}</div>
-            <div class="label">지하철역</div>
-            <div class="data" onclick="copy('${getCnSub(i.sub)}')">${formatSubway(i.sub)}</div>
-        </div>
+    // 서브 메뉴 아래에 장소 이름 버튼들 생성
+    sub.innerHTML = list.map((item, index) => `
+        <button onclick="renderCard('${cat}', ${index})">${item.kr}</button>
     `).join('');
+}
+
+// 6. [장소 이름] 클릭 시 특정 장소 카드만 렌더링
+function renderCard(cat, index) {
+    const item = window[cat + 'Data'][index];
+    const app = document.getElementById('app');
+    
+    app.className = ''; // 클래스 초기화
+    app.innerHTML = `
+        <div class="card">
+            <div class="label">명칭</div>
+            <div class="kr-text" onclick="copy('${item.cn}')">${item.kr}</div>
+            <div class="cn-text" onclick="copy('${item.cn}')">${item.cn}</div>
+            
+            <div class="label">주소</div>
+            <div class="data" onclick="copy('${item.addr}')">${item.addr}</div>
+            
+            <div class="label">지하철역</div>
+            <div class="data" onclick="copy('${getCnSub(item.sub)}')">${formatSubway(item.sub)}</div>
+        </div>
+    `;
 }
