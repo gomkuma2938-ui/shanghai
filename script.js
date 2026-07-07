@@ -1,4 +1,5 @@
-function copy(text) { navigator.clipboard.writeText(text); alert("복사 완료: " + text); }
+// 복사 및 유틸 함수
+function copy(text) { navigator.clipboard.writeText(text); alert("복사: " + text); }
 function getCnSub(text) { const m = text.match(/\((.*?)\)/); return m ? m[1] : text; }
 function formatSubway(text) {
     const lineMatch = text.match(/(\d+)호선/);
@@ -8,47 +9,25 @@ function formatSubway(text) {
     return `<div style="display: flex; align-items: center; gap: 5px;"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
 }
 
-// 1차 탭: 하단 메뉴
+// 1차 탭 클릭 시 2차 탭 생성
 function showSub(type, btnElement) {
     document.querySelectorAll('.footer button').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
 
     const sub = document.getElementById('sub-menu');
-    if(type === 'location') {
-        sub.innerHTML = `
-            <button onclick="renderList('hotel', this)">호텔</button>
-            <button onclick="renderList('tour', this)">관광지</button>
-            <button onclick="renderList('restaurant', this)">식당</button>
-        `;
-        renderList('hotel', sub.querySelector('button:first-child'));
-    }
-}
-
-// 2차 탭: 상단 메뉴 (카테고리 내 장소 목록)
-function renderList(cat, btnElement) {
-    document.querySelectorAll('#sub-menu button').forEach(btn => btn.classList.remove('active'));
-    // 만약 1차 메뉴 버튼이 아닌 2차 메뉴 버튼이면 active 추가
-    if(btnElement) btnElement.classList.add('active');
-
-    const list = window[cat + 'Data'];
-    const sub = document.getElementById('sub-menu');
+    const catData = window[type + 'Data'];
     
-    // 카테고리 버튼들을 다시 그려줌 (활성화 상태 유지)
-    sub.innerHTML = `
-        <button class="${cat==='hotel'?'active':''}" onclick="renderList('hotel', this)">호텔</button>
-        <button class="${cat==='tour'?'active':''}" onclick="renderList('tour', this)">관광지</button>
-        <button class="${cat==='restaurant'?'active':''}" onclick="renderList('restaurant', this)">식당</button>
-        <hr>
-    ` + list.map((item, index) => `
-        <button onclick="renderCard('${cat}', ${index}, this)">${item.kr}</button>
+    sub.innerHTML = catData.map((item, index) => `
+        <button onclick="renderCard('${type}', ${index}, this)">${item.kr}</button>
     `).join('');
 
-    renderCard(cat, 0, sub.querySelectorAll('button')[3]); // 장소목록의 첫번째 자동 선택
+    renderCard(type, 0, sub.querySelector('button'));
 }
 
-// 카드 출력
+// 2차 탭 선택 시 카드 출력
 function renderCard(cat, index, btnElement) {
-    document.querySelectorAll('#sub-menu button').forEach(btn => btn.classList.remove('active'));
+    const buttons = document.querySelectorAll('#sub-menu button');
+    buttons.forEach(btn => btn.classList.remove('active'));
     if(btnElement) btnElement.classList.add('active');
 
     const item = window[cat + 'Data'][index];
@@ -65,7 +44,7 @@ function renderCard(cat, index, btnElement) {
     `;
 }
 
-// 시작하자마자 첫 번째 탭 자동 클릭
+// 시작하자마자 호텔 탭 자동 실행
 window.onload = () => {
-    document.querySelector('.footer button').click();
+    showSub('hotel', document.querySelector('.footer button:nth-child(1)'));
 };
