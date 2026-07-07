@@ -1,7 +1,9 @@
 // 식당 ID와 실제 이름 매칭
 const resName = {
     jiajia: '지아지아탕바오',
-    dahuchun: '다후춘'
+    dahuchun: '다후춘',
+    haidilao: '하이디라오',
+    jiangbian: '강변성외(카오유)'
 };
 
 // 복사 기능
