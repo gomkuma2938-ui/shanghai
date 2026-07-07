@@ -42,7 +42,7 @@ function showSub(type) {
 
 // 5. 2차 탭 렌더링 (window 객체 사용)
 function render(cat) {
-    // window 객체를 통해 데이터 변수를 안전하게 참조
+    // 윈도우 객체에 직접 접근하도록 수정 (이미 위에서 window.으로 선언했으므로 안전)
     const dataMap = { 
         'hotel': window.hotelData, 
         'tour': window.tourData, 
@@ -52,12 +52,8 @@ function render(cat) {
     const list = dataMap[cat];
     
     if (!list) {
-        alert("데이터를 찾을 수 없습니다. 브라우저 콘솔(F12)을 확인하세요.");
-        console.error("데이터 로드 실패, 현재 상태:", { 
-            hotel: window.hotelData, 
-            tour: window.tourData, 
-            restaurant: window.restaurantData 
-        });
+        console.error("데이터 로드 안 됨. 현재 window 상태:", window);
+        alert("데이터가 로드되지 않았습니다. 잠시 후 다시 시도하세요.");
         return;
     }
 
