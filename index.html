@@ -7,20 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 상단 2차 메뉴 고정 영역 -->
     <div id="sub-menu"></div>
+    
+    <!-- 콘텐츠 영역 -->
     <div id="app"></div>
 
+    <!-- 하단 1차 메뉴 고정 영역 -->
     <footer class="footer">
-        <button onclick="showSub('location')">위치</button>
-        <button>메뉴</button>
-        <button>회화</button>
+        <button onclick="showSub('location', this)">위치</button>
+        <button onclick="alert('준비중입니다')">메뉴</button>
+        <button onclick="alert('준비중입니다')">회화</button>
     </footer>
 
-    <!-- 데이터 파일들을 먼저 로드 -->
     <script src="data/hotel.js"></script>
     <script src="data/tour.js"></script>
     <script src="data/restaurant.js"></script>
-    <!-- 기능 스크립트는 마지막에 로드 -->
     <script src="script.js"></script>
 </body>
 </html>
