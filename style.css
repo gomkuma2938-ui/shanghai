@@ -1,9 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&family=Noto+Sans+SC:wght@300;700&display=swap');
 
-body { 
-    font-family: 'Noto Sans KR', 'Noto Sans SC', sans-serif; 
-    margin: 0; padding-bottom: 80px; background: #f4f4f4; 
+body { font-family: 'Noto Sans KR', sans-serif; margin: 0; padding-bottom: 80px; background: #f4f4f4; }
+
+/* 상단 2차 메뉴 고정 */
+#sub-menu { 
+    position: sticky; top: 0; z-index: 999;
+    display: flex; justify-content: center; overflow-x: auto; 
+    padding: 10px; background: #fff; border-bottom: 1px solid #eee; 
+    white-space: nowrap; gap: 8px;
 }
+#sub-menu button { 
+    padding: 8px 16px; border-radius: 20px; border: 1px solid #333; 
+    background: white; cursor: pointer; flex-shrink: 0; transition: 0.3s;
+}
+#sub-menu button.active { background: #333; color: white; }
 
 /* 카드 스타일 */
 .card { background: white; padding: 20px; margin: 15px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -11,14 +21,13 @@ body {
 .kr-text { font-size: 16px; font-weight: 300; color: #333; margin-bottom: 4px; }
 .cn-text { font-size: 24px; font-weight: 700; color: #000; margin-bottom: 15px; }
 
-/* 하단 메인 메뉴 */
-.footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 60px; z-index: 1000; }
-.footer button { flex: 1; border: none; background: white; font-weight: bold; cursor: pointer; }
-.footer button:not(:last-child) { border-right: 1px solid #eee; }
-
-/* 2차 탭 (가로 스크롤) */
-#sub-menu { display: flex; overflow-x: auto; padding: 10px; background: #fff; border-bottom: 1px solid #eee; white-space: nowrap; gap: 8px; }
-#sub-menu button { padding: 8px 16px; border-radius: 20px; border: 1px solid #333; background: white; cursor: pointer; flex-shrink: 0; }
+/* 하단 1차 메뉴 고정 */
+.footer { 
+    position: fixed; bottom: 0; width: 100%; display: flex; 
+    background: #fff; border-top: 1px solid #ddd; height: 60px; z-index: 1000; 
+}
+.footer button { flex: 1; border: none; background: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+.footer button.active { background: #333; color: white; }
 
 /* 지하철 태그 */
 .subway-tag { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; color: white; font-size: 12px; font-weight: bold; margin-right: 5px; }
