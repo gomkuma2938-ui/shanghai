@@ -20,14 +20,24 @@ function showSub(type) {
 }
 
 function render(cat) {
-    let list = (cat === 'hotel') ? hotelData : (cat === 'tour') ? tourData : restaurantData;
-    document.getElementById('app').innerHTML = list.map(i => `
-        <div class="card">
+    const dataMap = { 'hotel': hotelData, 'tour': tourData, 'restaurant': restaurantData };
+    const list = dataMap[cat];
+    
+    const app = document.getElementById('app');
+    // 관광지일 경우 슬라이드 모드 적용
+    app.style.flexDirection = (cat === 'tour') ? 'row' : 'column';
+    app.style.overflowX = (cat === 'tour') ? 'auto' : 'visible';
+
+    app.innerHTML = list.map(i => `
+        <div class="card ${cat === 'tour' ? 'tour-mode' : ''}">
             <div class="label">명칭</div>
-            <div class="data" onclick="copy('${i.cn}')">${i.kr}<br><small style="color:blue">${i.cn}</small></div>
+            <div class="kr-text" onclick="copy('${i.cn}')">${i.kr}</div>
+            <div class="cn-text" onclick="copy('${i.cn}')">${i.cn}</div>
+            
             <div class="label">주소</div>
             <div class="data" onclick="copy('${i.addr}')">${i.addr}</div>
-            <div class="label">지하철역 (클릭 시 중국어 복사)</div>
+            
+            <div class="label">지하철역</div>
             <div class="data" onclick="copy('${getCnSub(i.sub)}')">${i.sub}</div>
         </div>
     `).join('');
