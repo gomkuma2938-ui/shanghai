@@ -1,39 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700&display=swap');
-body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Arial", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif, 'Noto Sans KR'; 
-    margin: 0; background: #f4f4f4; padding-bottom: 80px; 
-}
-
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Arial", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif, 'Noto Sans KR'; margin: 0; background: #f4f4f4; padding-bottom: 80px; }
 #menu-depth2 { position: fixed; top: 0; width: 100%; display: flex; background: #fff; height: 50px; z-index: 999; border-bottom: 1px solid #ddd; }
 #menu-depth2 button { flex: 1; border: none; background: none; font-weight: bold; cursor: pointer; }
 #menu-depth2 button.active { border-bottom: 3px solid #333; }
-
 #menu-depth3 { position: fixed; top: 50px; width: 100%; display: flex; overflow-x: auto; background: #f9f9f9; height: 50px; align-items: center; gap: 8px; padding: 0 10px; z-index: 998; }
 #menu-depth3 button { padding: 6px 15px; border-radius: 20px; border: 1px solid #ccc; background: white; flex-shrink: 0; cursor: pointer; }
 #menu-depth3 button.active { background: #333; color: white; border-color: #333; }
-
 #app { padding: 110px 10px 80px 10px; }
-
-/* 위치 상세 카드 수정: 한자는 그대로, 정보(주소/지하철)는 크게, 간격 확보 */
 .card { background: white; padding: 25px; margin: 10px; border-radius: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .card .kr-med { font-size: 18px; color: #333; font-weight: 700; margin-bottom: 8px; }
 .card .cn-big { font-size: 28px; font-weight: 700; margin-bottom: 20px; display: block; }
-.card .label { font-size: 15px; color: #333; margin-top: 12px; line-height: 1.5; font-weight: 500; }
-
-/* 지하철역 태그와 이름 간격 확보 */
-.subway-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-.subway-tag { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; color: white; font-size: 12px; font-weight: bold; }
-
 .menu-card { background: white; padding: 15px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
 .cn-big { font-size: 20px; font-weight: 700; display: block; }
 .py-small { font-size: 11px; color: #888; margin-left: 5px; vertical-align: middle; }
 .kr-read { font-size: 12px; color: #666; margin-top: 2px; }
 .kr-med { font-size: 14px; color: #444; margin-top: 2px; }
 .price-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ff4757; color: #ff4757; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
-
 .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 60px; z-index: 1000; }
 .footer button { flex: 1; border: none; background: white; font-weight: bold; cursor: pointer; }
 .footer button.active { background: #333; color: white; }
-
+.subway-tag { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; color: white; font-size: 11px; font-weight: bold; margin-right: 5px; }
 .line-2 { background-color: #78be20; } .line-4 { background-color: #581d81; } .line-6 { background-color: #d11270; }
 .line-8 { background-color: #009bdb; } .line-9 { background-color: #79c0e7; } .line-10 { background-color: #d7a1c3; } .line-13 { background-color: #f292d3; }
