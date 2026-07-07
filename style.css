@@ -4,41 +4,34 @@ body { font-family: 'Noto Sans KR', sans-serif; margin: 0; background: #f4f4f4; 
 /* 뎁스 고정 */
 #menu-depth2 { position: fixed; top: 0; width: 100%; display: flex; background: #fff; height: 50px; z-index: 999; border-bottom: 1px solid #ddd; }
 #menu-depth2 button { flex: 1; border: none; background: none; font-weight: bold; cursor: pointer; }
-#menu-depth2 button.active { border-bottom: 3px solid #333; color: #333; }
+#menu-depth2 button.active { border-bottom: 3px solid #333; }
 
-#menu-depth3 { position: fixed; top: 50px; width: 100%; display: flex; overflow-x: auto; background: #f9f9f9; height: 50px; align-items: center; gap: 8px; padding: 0 10px; z-index: 998; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-#menu-depth3 button { padding: 6px 15px; border-radius: 20px; border: 1px solid #ccc; background: white; flex-shrink: 0; cursor: pointer; font-size: 13px; }
+#menu-depth3 { position: fixed; top: 50px; width: 100%; display: flex; overflow-x: auto; background: #f9f9f9; height: 50px; align-items: center; gap: 8px; padding: 0 10px; z-index: 998; }
+#menu-depth3 button { padding: 6px 15px; border-radius: 20px; border: 1px solid #ccc; background: white; flex-shrink: 0; cursor: pointer; }
 #menu-depth3 button.active { background: #333; color: white; border-color: #333; }
 
-/* 본문 영역 */
+/* 본문 카드 */
 #app { padding: 110px 10px 80px 10px; }
-
-/* 카드 디자인 */
-.menu-card { 
-    background: white; padding: 15px; margin-bottom: 8px; border-radius: 12px; 
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer;
-}
-.text-area { flex: 1; padding-right: 10px; }
-
-/* 텍스트 크기 강조 */
+.card, .menu-card { background: white; padding: 15px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.text-area { flex: 1; }
 .cn-big { font-size: 20px; font-weight: 700; display: block; }
 .py-small { font-size: 11px; color: #888; margin-left: 5px; vertical-align: middle; }
-.kr-med { font-size: 14px; color: #444; margin-top: 5px; font-weight: 500; }
+.kr-med { font-size: 14px; color: #444; margin-top: 5px; }
 
 /* 가격 동그라미 */
-.price-circle { 
-    width: 55px; height: 55px; border-radius: 50%; 
-    border: 2px solid #ff4757; color: #ff4757; 
-    display: flex; align-items: center; justify-content: center; 
-    font-weight: 700; font-size: 14px; flex-shrink: 0;
-}
+.price-circle { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #ff4757; color: #ff4757; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
 
 /* 하단 메뉴 */
 .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 60px; z-index: 1000; }
-.footer button { flex: 1; border: none; background: white; font-weight: bold; cursor: pointer; font-size: 15px; }
+.footer button { flex: 1; border: none; background: white; font-weight: bold; cursor: pointer; }
 .footer button.active { background: #333; color: white; }
 
-/* 위치 상세 카드 전용 */
-.card { background: white; padding: 20px; margin: 15px; border-radius: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.label { font-size: 12px; color: #999; margin-top: 10px; }
+/* 지하철역 태그 */
+.subway-tag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; color: white; font-size: 11px; font-weight: bold; margin-right: 5px; }
+.line-2 { background-color: #78be20; }
+.line-4 { background-color: #581d81; }
+.line-6 { background-color: #d11270; }
+.line-8 { background-color: #009bdb; }
+.line-9 { background-color: #79c0e7; }
+.line-10 { background-color: #d7a1c3; }
+.line-13 { background-color: #f292d3; }
