@@ -82,4 +82,9 @@ function renderMenu(res, cat, btn) {
         </div>`).join('');
 }
 
-window.onload = () => showLocationTab(document.getElementById('btn-loc'));
+window.onload = () => {
+    // 푸터 버튼들에 함수 연결
+    document.getElementById('btn-loc').onclick = function() { showLocationTab(this); };
+    document.getElementById('btn-menu').onclick = function() { showMenuTab(this); };
+    showLocationTab(document.getElementById('btn-loc'));
+};
