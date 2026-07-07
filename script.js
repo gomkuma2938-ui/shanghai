@@ -1,71 +1,59 @@
-// 1. 공통 유틸 함수
+// 유틸: 복사 로직
 function copy(text) { navigator.clipboard.writeText(text); alert("복사 완료: " + text); }
-function getCnSub(text) { const m = text.match(/\((.*?)\)/); return m ? m[1] : text; }
-function formatSubway(text) {
-    const lineMatch = text.match(/(\d+)호선/);
-    if (!lineMatch) return text;
-    const lineNum = lineMatch[1];
-    const stationName = text.split(' ')[0];
-    return `<div style="display: flex; align-items: center; gap: 5px;"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
+
+// 1. 위치 탭 로직
+function showLocationTab(btn) {
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('menu-depth2').innerHTML = `<button onclick="renderLocation('hotel', this)">호텔</button><button onclick="renderLocation('tour', this)">관광지</button><button onclick="renderLocation('restaurant', this)">식당</button>`;
+    renderLocation('hotel', document.querySelector('#menu-depth2 button'));
 }
 
-// 2. 1뎁스(하단 메뉴) 선택 시 -> 2뎁스(상단 1차 메뉴) 생성
-function showSub(type, btnElement) {
-    if (btnElement) {
-        document.querySelectorAll('.footer button').forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-    }
-
-    const depth2 = document.getElementById('menu-depth2');
-    
-    if(type === 'location') {
-        depth2.innerHTML = `
-            <button onclick="renderList('hotel', this)">호텔</button>
-            <button onclick="renderList('tour', this)">관광지</button>
-            <button onclick="renderList('restaurant', this)">식당</button>
-        `;
-        // 자동으로 호텔 탭 활성화
-        renderList('hotel', depth2.querySelector('button'));
-    }
-}
-
-// 3. 2뎁스(1차 메뉴) 선택 시 -> 3뎁스(2차 메뉴) 장소명 생성
-function renderList(cat, btnElement) {
-    document.querySelectorAll('#menu-depth2 button').forEach(btn => btn.classList.remove('active'));
-    if(btnElement) btnElement.classList.add('active');
-
+function renderLocation(cat, btn) {
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     const list = window[cat + 'Data'];
-    const depth3 = document.getElementById('menu-depth3');
-    
-    depth3.innerHTML = list.map((item, index) => `
-        <button onclick="renderCard('${cat}', ${index}, this)">${item.kr}</button>
-    `).join('');
-
-    // 해당 카테고리의 첫 번째 장소 자동 활성화
-    renderCard(cat, 0, depth3.querySelector('button'));
+    document.getElementById('menu-depth3').innerHTML = list.map((i, idx) => `<button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>`).join('');
+    renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
 }
 
-// 4. 3뎁스(2차 메뉴) 장소명 선택 시 -> 화면 중앙에 카드 렌더링
-function renderCard(cat, index, btnElement) {
-    document.querySelectorAll('#menu-depth3 button').forEach(btn => btn.classList.remove('active'));
-    if(btnElement) btnElement.classList.add('active');
-
-    const item = window[cat + 'Data'][index];
+function renderLocCard(cat, idx, btn) {
+    document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    const item = window[cat + 'Data'][idx];
     document.getElementById('app').innerHTML = `
-        <div class="card">
-            <div class="label">명칭</div>
-            <div class="kr-text" onclick="copy('${item.cn}')">${item.kr}</div>
-            <div class="cn-text" onclick="copy('${item.cn}')">${item.cn}</div>
-            <div class="label">주소</div>
-            <div class="data" onclick="copy('${item.addr}')">${item.addr}</div>
-            <div class="label">지하철역</div>
-            <div class="data" onclick="copy('${getCnSub(item.sub)}')">${formatSubway(item.sub)}</div>
-        </div>
-    `;
+        <div class="card" onclick="copy('${item.cn}')">
+            <div class="kr-med">${item.kr}</div>
+            <div class="cn-big">${item.cn}</div>
+            <div class="label">주소: ${item.addr}</div>
+        </div>`;
 }
 
-// 5. 사이트 접속 시 초기화면 (자동으로 '위치' 버튼 클릭)
-window.onload = () => {
-    const firstTab = document.querySelector('.footer button');
-    showSub('location', firstTab);
-};
+// 2. 메뉴 탭 로직
+function showMenuTab(btn) {
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('menu-depth2').innerHTML = `<button onclick="loadMenu('jiajia', this)">지아지아탕바오</button><button onclick="loadMenu('dahuchun', this)">다후춘</button>`;
+    loadMenu('jiajia', document.querySelector('#menu-depth2 button'));
+}
+
+function loadMenu(res, btn) {
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cats = Object.keys(menuData[res]);
+    document.getElementById('menu-depth3').innerHTML = cats.map(c => `<button onclick="renderMenu('${res}', '${c}', this)">${c}</button>`).join('');
+    renderMenu(res, cats[0], document.querySelector('#menu-depth3 button'));
+}
+
+function renderMenu(res, cat, btn) {
+    document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('app').innerHTML = menuData[res][cat].map(i => `
+        <div class="menu-card" onclick="copy('${i.cn}')">
+            <div class="text-area">
+                <div><span class="cn-big">${i.cn}</span><span class="py-small">${i.py}</span></div>
+                <div class="kr-med">${i.kr}</div>
+            </div>
+            <div class="price-circle">${i.price}</div>
+        </div>`).join('');
+}
