@@ -3,29 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상하이 여행 가이드</title>
+    <title>상하이 여행</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 2뎁스 (1차 메뉴: 호텔, 관광지, 식당) - 상단 고정 -->
     <div id="menu-depth2"></div>
-    
-    <!-- 3뎁스 (2차 메뉴: 장소명 리스트) - 2뎁스 하단에 고정 -->
     <div id="menu-depth3"></div>
-    
-    <!-- 실제 카드 출력 영역 -->
     <div id="app"></div>
 
-    <!-- 1뎁스 (하단 메뉴) - 하단 고정 -->
     <footer class="footer">
-        <button onclick="showSub('location', this)">위치</button>
-        <button onclick="alert('준비중입니다')">메뉴</button>
-        <button onclick="alert('준비중입니다')">회화</button>
+        <button id="btn-loc" onclick="showLocationTab(this)">위치</button>
+        <button id="btn-menu" onclick="showMenuTab(this)">메뉴</button>
+        <button onclick="alert('준비중')">회화</button>
     </footer>
 
     <script src="data/hotel.js"></script>
     <script src="data/tour.js"></script>
     <script src="data/restaurant.js"></script>
+    <script src="data/menu_data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
