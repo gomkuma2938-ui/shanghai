@@ -16,8 +16,8 @@ function renderLocCard(cat, idx, btn) {
     const lines = item.sub.match(/\d+/g) || [];
     const lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
-    // 설명(desc)이 데이터에 있을 경우 렌더링하도록 복구
-    const descHtml = item.desc ? `<div class="desc">${item.desc.replace(/\n\n/g, '<p></p>')}</div>` : "";
+    // 데이터에 desc가 없는 경우를 대비해 안전하게 처리
+    const descHtml = (item.desc) ? `<div class="desc">${item.desc.replace(/\n\n/g, '<p></p>')}</div>` : "";
     
     document.getElementById('app').innerHTML = `
         <div class="card" onclick="copy('${item.cn}')">
@@ -58,6 +58,8 @@ function renderLocation(cat, btn) {
 function showMenuTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    if (typeof menuData === 'undefined') return;
+    
     document.getElementById('menu-depth2').innerHTML = Object.keys(menuData).map(res => `
         <button onclick="loadMenu('${res}', this)">${resName[res]}</button>`).join('');
     loadMenu(Object.keys(menuData)[0], document.querySelector('#menu-depth2 button'));
@@ -86,8 +88,7 @@ function renderMenu(res, cat, btn) {
         </div>`).join('');
 }
 
+// 초기화: 페이지 로딩 시 첫 탭 강제 활성화
 window.onload = () => {
-    document.getElementById('btn-loc').onclick = function() { showLocationTab(this); };
-    document.getElementById('btn-menu').onclick = function() { showMenuTab(this); };
     showLocationTab(document.getElementById('btn-loc'));
 };
