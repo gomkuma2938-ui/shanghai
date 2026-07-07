@@ -24,3 +24,25 @@ body {
 /* 관광지 카드 슬라이드 컨테이너 */
 #app { display: flex; flex-direction: column; }
 .card.tour-mode { min-width: 90vw; scroll-snap-align: center; }
+
+/*지하철 호선*/
+.subway-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+/* 호선별 색상 */
+.line-2 { background-color: #78be20; }
+.line-4 { background-color: #581d81; }
+.line-6 { background-color: #d11270; }
+.line-8 { background-color: #009bdb; }
+.line-9 { background-color: #79c0e7; }
+.line-10 { background-color: #d7a1c3; }
+.line-13 { background-color: #f292d3; }
