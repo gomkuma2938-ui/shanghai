@@ -2,21 +2,26 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상하이 여행</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>상하이 여행 가이드</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 상단 메뉴 영역 -->
     <div id="menu-depth2"></div>
     <div id="menu-depth3"></div>
+
+    <!-- 메인 컨텐츠 영역 -->
     <div id="app"></div>
 
+    <!-- 하단 탭 바 -->
     <footer class="footer">
         <button id="btn-loc" onclick="showLocationTab(this)">위치</button>
         <button id="btn-menu" onclick="showMenuTab(this)">메뉴</button>
-        <button onclick="alert('준비중')">회화</button>
+        <button onclick="alert('준비중입니다.')">회화</button>
     </footer>
 
+    <!-- 데이터 및 스크립트 (순서 중요) -->
     <script src="data/hotel.js"></script>
     <script src="data/tour.js"></script>
     <script src="data/restaurant.js"></script>
