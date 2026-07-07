@@ -7,17 +7,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 상단 2차 메뉴 고정 영역 -->
+    <!-- 2차 메뉴가 들어갈 영역 (하단 탭 바로 위) -->
     <div id="sub-menu"></div>
     
-    <!-- 콘텐츠 영역 -->
+    <!-- 콘텐츠 출력 영역 -->
     <div id="app"></div>
 
-    <!-- 하단 1차 메뉴 고정 영역 -->
+    <!-- 하단 1차 탭 -->
     <footer class="footer">
-        <button onclick="showSub('location', this)">위치</button>
-        <button onclick="alert('준비중입니다')">메뉴</button>
-        <button onclick="alert('준비중입니다')">회화</button>
+        <button onclick="showSub('hotel', this)">호텔</button>
+        <button onclick="showSub('tour', this)">관광지</button>
+        <button onclick="showSub('restaurant', this)">식당</button>
     </footer>
 
     <script src="data/hotel.js"></script>
