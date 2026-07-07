@@ -5,13 +5,14 @@ function renderLocCard(cat, idx, btn) {
     if(btn) btn.classList.add('active');
     
     const item = window[cat + 'Data'][idx];
-    const stationMatch = item.sub.match(/(.*?)\((.*?)\) - (.*)/);
-    const stationKr = stationMatch ? stationMatch[1].trim() : item.sub.split('-')[0].trim();
+    const subParts = item.sub.split('-');
+    const stationMatch = subParts[0].match(/(.*?)\((.*?)\)/);
+    const stationKr = stationMatch ? stationMatch[1].trim() + '역' : subParts[0].trim() + '역';
     const stationCn = stationMatch ? stationMatch[2].trim() : "";
     const lines = item.sub.match(/\d+/g) || [];
     const lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
-    const descHtml = item.desc ? `<div class="desc">${item.desc}</div>` : "";
+    const descHtml = item.desc ? `<div class="desc">${item.desc.replace(/\n\n/g, '</p><p>')}</div>` : "";
     
     document.getElementById('app').innerHTML = `
         <div class="card" onclick="copy('${item.cn}')">
@@ -19,9 +20,9 @@ function renderLocCard(cat, idx, btn) {
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
-            <div class="addr-line" onclick="event.stopPropagation(); copy('${item.addr}')">주소 ${item.addr}</div>
+            <div class="addr-line" onclick="event.stopPropagation(); copy('${item.addr}')">${item.addr}</div>
             <div class="subway-line">
-                <span class="station-kr">${stationKr.replace('역', '')}</span>
+                <span class="station-kr">${stationKr}</span>
                 <span class="station-cn">${stationCn}</span>
                 ${lineTags}
             </div>
@@ -78,3 +79,5 @@ function renderMenu(res, cat, btn) {
             <div class="price-circle">¥${i.price}</div>
         </div>`).join('');
 }
+
+window.onload = () => showLocationTab(document.getElementById('btn-loc'));
