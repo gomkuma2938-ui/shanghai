@@ -1,17 +1,21 @@
 function copy(text) { navigator.clipboard.writeText(text); alert("복사: " + text); }
 
+// 호선 파싱 로직 보완: '1호선' 형식과 '2·4·6·9호선' 형식을 모두 처리
 function formatSubway(subText) {
-    const stationMatch = subText.match(/(.*?)역\((.*?)\)/);
-    const stationKr = stationMatch ? stationMatch[1] : subText.split('역')[0];
-    const stationCn = stationMatch ? stationMatch[2] : "";
-    const lines = subText.match(/\d+(?=호선)/g) || [];
+    const stationMatch = subText.match(/(.*?)\((.*?)\)/);
+    // 괄호가 없는 경우(관광지 데이터)와 있는 경우(식당/호텔)를 모두 고려하여 역명 추출
+    const stationKr = stationMatch ? stationMatch[1].trim() : subText.split('-')[0].trim();
+    const stationCn = stationMatch ? stationMatch[2].trim() : "";
+    
+    // 호선 번호 추출: '1호선' 또는 '2·4·6·9호선'에서 숫자만 골라냄
+    const lines = subText.match(/\d+/g) || [];
     const lineHtml = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
     return `
         <div class="subway-container">
             <div class="line-list" style="margin-bottom: 5px;">${lineHtml}</div>
-            <div onclick="copy('${stationKr} ${stationCn}')" style="cursor:pointer; font-weight:700;">
-                ${stationKr} <span style="font-size:12px; color:#666;">(${stationCn})</span>
+            <div onclick="copy('${stationKr.replace('역', '')} ${stationCn}')" style="cursor:pointer; font-weight:700;">
+                ${stationKr} <span style="font-size:12px; color:#666;">${stationCn ? '(' + stationCn + ')' : ''}</span>
             </div>
         </div>`;
 }
