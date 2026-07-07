@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상하이 가이드</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding-bottom: 80px; background: #f4f4f4; }
+        .card { background: white; padding: 20px; margin: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .label { font-size: 14px; color: #888; margin-top: 10px; }
+        .data { font-size: 20px; font-weight: bold; padding: 8px 0; border-bottom: 1px solid #eee; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 2px solid #333; }
+        .footer button { flex: 1; padding: 20px; border: none; font-size: 18px; font-weight: bold; background: white; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <footer class="footer">
+        <button onclick="render('hotel')">숙소</button>
+        <button onclick="render('tour')">관광지</button>
+        <button onclick="render('food')">식당</button>
+    </footer>
+
+    <!-- JS 파일 로드 -->
+    <script src="data/hotel.js"></script>
+    <script src="data/tour.js"></script>
+    <script src="data/food.js"></script>
+
+    <script>
+        function copy(text) { navigator.clipboard.writeText(text); alert("복사 완료: " + text); }
+        function getCnSub(text) { return text.match(/\((.*?)\)/)[1]; }
+
+        function render(type) {
+            let list = (type === 'hotel') ? hotelData : (type === 'tour') ? tourData : foodData;
+            document.getElementById('app').innerHTML = list.map(i => `
+                <div class="card">
+                    <div class="label">명칭</div>
+                    <div class="data" onclick="copy('${i.cn}')">${i.kr}<br><small style="color:blue">${i.cn}</small></div>
+                    <div class="label">주소</div>
+                    <div class="data" onclick="copy('${i.addr}')">${i.addr}</div>
+                    <div class="label">지하철역 (클릭 시 중국어 복사)</div>
+                    <div class="data" onclick="copy('${getCnSub(i.sub)}')">${i.sub}</div>
+                </div>
+            `).join('');
+        }
+        render('hotel'); // 초기화면
+    </script>
+</body>
+</html>
