@@ -1,14 +1,10 @@
 function copy(text) { navigator.clipboard.writeText(text); alert("복사: " + text); }
 
-// 역 정보 처리 로직: 환승역과 한글/중국어 병기 지원
 function formatSubway(subText) {
-    // 예: "2호선, 10호선 난징동루역(南京东路)"
     const stationMatch = subText.match(/(.*?)역\((.*?)\)/);
     const stationKr = stationMatch ? stationMatch[1] : subText.split('역')[0];
     const stationCn = stationMatch ? stationMatch[2] : "";
-    
     const lines = subText.match(/\d+(?=호선)/g) || [];
-    
     const lineHtml = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
     
     return `
@@ -20,7 +16,6 @@ function formatSubway(subText) {
         </div>`;
 }
 
-// 위치 탭
 function showLocationTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -38,9 +33,7 @@ function renderLocCard(cat, idx, btn) {
     document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     const item = window[cat + 'Data'][idx];
-    
-    const descHtml = item.desc ? `<div class="label" style="font-size:14px; color:#777; margin-top:15px; font-style:italic;">"${item.desc}"</div>` : '';
-    
+    const descHtml = item.desc ? `<div class="label" style="font-size:14px; color:#777; margin-top:15px; font-style:italic; line-height:1.6;">"${item.desc}"</div>` : '';
     document.getElementById('app').innerHTML = `
         <div class="card">
             <div onclick="copy('${item.cn}')">
@@ -53,8 +46,6 @@ function renderLocCard(cat, idx, btn) {
         </div>`;
 }
 
-// 메뉴 탭
-const resName = { jiajia: "지아지아탕바오", dahuchun: "다후춘" };
 function showMenuTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -81,5 +72,4 @@ function renderMenu(res, cat, btn) {
             <div class="price-circle">¥${i.price}</div>
         </div>`).join('');
 }
-
 window.onload = () => showLocationTab(document.getElementById('btn-loc'));
