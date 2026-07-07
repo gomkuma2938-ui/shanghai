@@ -42,7 +42,6 @@ function showSub(type) {
 
 // 5. 2차 탭 렌더링 (window 객체 사용)
 function render(cat) {
-    // 윈도우 객체에 직접 접근하도록 수정 (이미 위에서 window.으로 선언했으므로 안전)
     const dataMap = { 
         'hotel': window.hotelData, 
         'tour': window.tourData, 
@@ -51,9 +50,10 @@ function render(cat) {
     
     const list = dataMap[cat];
     
-    if (!list) {
-        console.error("데이터 로드 안 됨. 현재 window 상태:", window);
-        alert("데이터가 로드되지 않았습니다. 잠시 후 다시 시도하세요.");
+    // 데이터가 없는 경우를 대비한 안전 장치
+    if (!list || list.length === 0) {
+        console.error(`${cat} 데이터를 찾을 수 없습니다.`);
+        document.getElementById('app').innerHTML = '<p>데이터를 불러오는 중이거나 데이터가 없습니다.</p>';
         return;
     }
 
@@ -62,6 +62,7 @@ function render(cat) {
     app.style.flexDirection = (cat === 'tour') ? 'row' : 'column';
     app.style.overflowX = (cat === 'tour') ? 'auto' : 'visible';
 
+    // 렌더링
     app.innerHTML = list.map(i => `
         <div class="card ${cat === 'tour' ? 'tour-mode' : ''}">
             <div class="label">명칭</div>
