@@ -1,5 +1,6 @@
 function copy(text) { navigator.clipboard.writeText(text); alert("복사: " + text); }
 function getCnSub(text) { const m = text.match(/\((.*?)\)/); return m ? m[1] : text; }
+
 function formatSubway(text) {
     const lineMatch = text.match(/(\d+)호선/);
     if (!lineMatch) return text;
@@ -26,7 +27,20 @@ function renderLocCard(cat, idx, btn) {
     document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     const item = window[cat + 'Data'][idx];
-    document.getElementById('app').innerHTML = `<div class="card" onclick="copy('${item.cn}')"><div><div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn}</div><div class="label" style="font-size:12px; color:#999; margin-top:5px;">주소: ${item.addr}</div><div class="label" style="font-size:12px; color:#999; margin-top:5px;">지하철: ${formatSubway(item.sub)}</div></div></div>`;
+    
+    // 설명(desc) 필드가 있을 경우 추가 렌더링
+    const descHtml = item.desc ? `<div class="label" style="font-size:14px; color:#777; margin-top:15px; font-style:italic;">"${item.desc}"</div>` : '';
+    
+    document.getElementById('app').innerHTML = `
+        <div class="card" onclick="copy('${item.cn}')">
+            <div>
+                <div class="kr-med">${item.kr}</div>
+                <div class="cn-big">${item.cn}</div>
+                <div class="label" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500;">주소: ${item.addr}</div>
+                <div class="label" style="font-size:15px; color:#333; margin-top:12px; line-height:1.5; font-weight:500;">지하철: ${formatSubway(item.sub)}</div>
+                ${descHtml}
+            </div>
+        </div>`;
 }
 
 // 메뉴 탭
