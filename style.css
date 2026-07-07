@@ -10,12 +10,19 @@ body { font-family: 'Noto Sans KR', sans-serif; margin: 0; background: #f4f4f4; 
 #menu-depth3 button.active { background: #333; color: white; border-color: #333; }
 
 #app { padding: 110px 10px 80px 10px; }
-.card, .menu-card { background: white; padding: 15px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+
+/* 수정된 위치 상세 카드 스타일 */
+.card { background: white; padding: 25px; margin: 10px; border-radius: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.card .kr-med { font-size: 20px; color: #333; font-weight: 700; margin-bottom: 10px; }
+.card .cn-big { font-size: 32px; font-weight: 700; margin-bottom: 15px; display: block; }
+.card .label { font-size: 16px; color: #555; margin-top: 8px; line-height: 1.5; }
+
+/* 기존 메뉴 카드 스타일 유지 */
+.menu-card { background: white; padding: 15px; margin-bottom: 8px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
 .cn-big { font-size: 20px; font-weight: 700; display: block; }
 .py-small { font-size: 11px; color: #888; margin-left: 5px; vertical-align: middle; }
 .kr-read { font-size: 12px; color: #666; margin-top: 2px; }
 .kr-med { font-size: 14px; color: #444; margin-top: 2px; }
-
 .price-circle { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ff4757; color: #ff4757; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
 
 .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 60px; z-index: 1000; }
