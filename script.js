@@ -5,7 +5,7 @@ function formatSubway(text) {
     if (!lineMatch) return text;
     const lineNum = lineMatch[1];
     const stationName = text.split(' ')[0];
-    return `<div style="display: flex; align-items: center; gap: 5px;"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
+    return `<div class="subway-wrapper"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
 }
 
 // 위치 탭
