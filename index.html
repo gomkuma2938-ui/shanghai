@@ -7,25 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 상단 메뉴 영역 -->
     <div id="menu-depth2"></div>
     <div id="menu-depth3"></div>
-
-    <!-- 메인 컨텐츠 영역 -->
     <div id="app"></div>
 
-    <!-- 하단 탭 바 -->
     <footer class="footer">
         <button id="btn-loc" onclick="showLocationTab(this)">위치</button>
         <button id="btn-menu" onclick="showMenuTab(this)">메뉴</button>
-        <button onclick="alert('준비중입니다.')">회화</button>
+        <button onclick="alert('회화 서비스 준비중입니다.')">회화</button>
     </footer>
 
-    <!-- 데이터 및 스크립트 (순서 중요) -->
+    <!-- 데이터 파일들 -->
     <script src="data/hotel.js"></script>
     <script src="data/tour.js"></script>
     <script src="data/restaurant.js"></script>
     <script src="data/menu_data.js"></script>
+    <!-- 로직 파일 -->
     <script src="script.js"></script>
 </body>
 </html>
