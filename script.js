@@ -4,34 +4,32 @@ function copy(text) {
     alert("복사: " + text); 
 }
 
-// 2. 지하철 정보에서 중국어 역명만 추출 (예: 예원역 (豫园站) -> 豫园站)
+// 2. 지하철 정보에서 중국어 역명 추출
 function getCnSub(text) { 
     const m = text.match(/\((.*?)\)/); 
     return m ? m[1] : text; 
 }
 
-// 3. 지하철역 텍스트를 노선 색상 아이콘으로 변환
+// 3. 지하철역 노선 색상 아이콘 처리
 function formatSubway(text) {
-    // "예원역 (豫园站) - 10호선"에서 숫자 추출
     const lineMatch = text.match(/(\d+)호선/);
     if (!lineMatch) return text;
-    
     const lineNum = lineMatch[1];
-    const stationName = text.split(' ')[0]; // 역 이름만 가져오기
+    const stationName = text.split(' ')[0];
     
     return `
-        <div style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 5px;">
             <span class="subway-tag line-${lineNum}">${lineNum}</span>
             <span>${stationName}</span>
         </div>
     `;
 }
 
-// 4. 위치 탭 클릭 시 서브 메뉴(호텔/관광지/식당) 생성
+// 4. 위치 탭 서브 메뉴 생성
 function showSub(type) {
     const sub = document.getElementById('sub-menu');
     const app = document.getElementById('app');
-    app.innerHTML = ''; // 기존 콘텐츠 초기화
+    app.innerHTML = ''; 
 
     if(type === 'location') {
         sub.innerHTML = `
@@ -42,9 +40,9 @@ function showSub(type) {
     }
 }
 
-// 5. 2차 탭 클릭 시 데이터 렌더링
+// 5. 2차 탭 렌더링 (window 객체 사용)
 function render(cat) {
-    // 데이터 매핑 (restaurant.js에서 변수명을 restaurantData로 맞췄다고 가정)
+    // window 객체를 통해 데이터 변수를 안전하게 참조
     const dataMap = { 
         'hotel': window.hotelData, 
         'tour': window.tourData, 
@@ -54,18 +52,20 @@ function render(cat) {
     const list = dataMap[cat];
     
     if (!list) {
-        console.error(cat + " 데이터를 찾을 수 없습니다.");
+        alert("데이터를 찾을 수 없습니다. 브라우저 콘솔(F12)을 확인하세요.");
+        console.error("데이터 로드 실패, 현재 상태:", { 
+            hotel: window.hotelData, 
+            tour: window.tourData, 
+            restaurant: window.restaurantData 
+        });
         return;
     }
 
     const app = document.getElementById('app');
-    
-    // 관광지 전용 슬라이드 스타일 처리
     app.style.display = 'flex';
     app.style.flexDirection = (cat === 'tour') ? 'row' : 'column';
     app.style.overflowX = (cat === 'tour') ? 'auto' : 'visible';
 
-    // 카드 생성
     app.innerHTML = list.map(i => `
         <div class="card ${cat === 'tour' ? 'tour-mode' : ''}">
             <div class="label">명칭</div>
