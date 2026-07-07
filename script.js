@@ -1,28 +1,22 @@
 // 1. 복사 기능
 function copy(text) { 
     navigator.clipboard.writeText(text); 
-    alert("복사: " + text); 
+    alert("복사 완료: " + text); 
 }
 
-// 2. 지하철 정보에서 중국어 역명 추출
+// 2. 중국어 역명 추출
 function getCnSub(text) { 
     const m = text.match(/\((.*?)\)/); 
     return m ? m[1] : text; 
 }
 
-// 3. 지하철역 노선 색상 아이콘 처리
+// 3. 지하철 아이콘 생성
 function formatSubway(text) {
     const lineMatch = text.match(/(\d+)호선/);
     if (!lineMatch) return text;
     const lineNum = lineMatch[1];
     const stationName = text.split(' ')[0];
-    
-    return `
-        <div style="display: flex; align-items: center; gap: 5px;">
-            <span class="subway-tag line-${lineNum}">${lineNum}</span>
-            <span>${stationName}</span>
-        </div>
-    `;
+    return `<div style="display: flex; align-items: center; gap: 5px;"><span class="subway-tag line-${lineNum}">${lineNum}</span><span>${stationName}</span></div>`;
 }
 
 // 4. 위치 탭 서브 메뉴 생성
@@ -30,6 +24,7 @@ function showSub(type) {
     const sub = document.getElementById('sub-menu');
     const app = document.getElementById('app');
     app.innerHTML = ''; 
+    app.className = '';
 
     if(type === 'location') {
         sub.innerHTML = `
@@ -40,7 +35,7 @@ function showSub(type) {
     }
 }
 
-// 5. 2차 탭 렌더링 (window 객체 사용)
+// 5. 렌더링 함수
 function render(cat) {
     const dataMap = { 
         'hotel': window.hotelData, 
@@ -49,29 +44,23 @@ function render(cat) {
     };
     
     const list = dataMap[cat];
-    
-    // 데이터가 없는 경우를 대비한 안전 장치
-    if (!list || list.length === 0) {
-        console.error(`${cat} 데이터를 찾을 수 없습니다.`);
-        document.getElementById('app').innerHTML = '<p>데이터를 불러오는 중이거나 데이터가 없습니다.</p>';
+    const app = document.getElementById('app');
+
+    if (!list) {
+        alert("데이터가 아직 로드되지 않았습니다.");
         return;
     }
 
-    const app = document.getElementById('app');
-    app.style.display = 'flex';
-    app.style.flexDirection = (cat === 'tour') ? 'row' : 'column';
-    app.style.overflowX = (cat === 'tour') ? 'auto' : 'visible';
+    // 모드 설정
+    app.className = (cat === 'tour') ? 'tour-mode-container' : '';
 
-    // 렌더링
     app.innerHTML = list.map(i => `
         <div class="card ${cat === 'tour' ? 'tour-mode' : ''}">
             <div class="label">명칭</div>
             <div class="kr-text" onclick="copy('${i.cn}')">${i.kr}</div>
             <div class="cn-text" onclick="copy('${i.cn}')">${i.cn}</div>
-            
             <div class="label">주소</div>
             <div class="data" onclick="copy('${i.addr}')">${i.addr}</div>
-            
             <div class="label">지하철역</div>
             <div class="data" onclick="copy('${getCnSub(i.sub)}')">${formatSubway(i.sub)}</div>
         </div>
