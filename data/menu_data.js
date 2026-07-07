@@ -73,5 +73,50 @@ window.menuData = {
             { cn: "爱森炸猪排", py: "àisēn zhàzhūpái", kr_read: "아이썬 짜주파이", kr: "아이썬 돈가스", price: "17" },
             { cn: "菜饭炸猪排套餐", py: "càifàn zhàzhūpái tàocān", kr_read: "차이판 짜주파이 타오찬", kr: "채소밥 돈가스 세트", price: "32" }
         ]
+    },
+        haidilao: {
+        "탕류(육수)": [
+            { cn: "清油麻辣火锅", py: "qīngyóu málà huǒguō", kr_read: "칭요우 마라 훠궈", kr: "청유 마라탕 (기본 매운맛)", price: "30~" },
+            { cn: "番茄火锅", py: "fānqié huǒguō", kr_read: "판치에 훠궈", kr: "토마토탕 (강추)", price: "28~" },
+            { cn: "菌汤火锅", py: "jūntāng huǒguō", kr_read: "쥔탕 훠궈", kr: "버섯탕", price: "25~" },
+            { cn: "猪肚鸡火锅", py: "zhūdùjī huǒguō", kr_read: "쭈뚜지 훠궈", kr: "삼계탕맛(돼지위+닭)", price: "32~" }
+        ],
+        "고기류": [
+            { cn: "捞派肥牛", py: "lāopài féiniú", kr_read: "라오파이 페이뉴", kr: "하이디라오 특제 소고기", price: "68" },
+            { cn: "捞派람肉", py: "lāopài yángròu", kr_read: "라오파이 양로우", kr: "하이디라오 특제 양고기", price: "62" },
+            { cn: "精品肥牛", py: "jīngpǐn féiniú", kr_read: "징핀 페이뉴", kr: "우삼겹", price: "58" },
+            { cn: "招牌虾滑", py: "zhāopái xiāhuá", kr_read: "쟈오파이 시아후아", kr: "새우 완자 (필수 주문)", price: "56" }
+        ],
+        "야채/사이드": [
+            { cn: "蔬菜拼盘", py: "shūcài pīnpán", kr_read: "슈차이 핀판", kr: "모둠 채소", price: "38" },
+            { cn: "菌类拼盘", py: "jùnlèi pīnpán", kr_read: "쥔레이 핀판", kr: "모둠 버섯", price: "36" },
+            { cn: "捞派捞面", py: "lāopài lāomiàn", kr_read: "라오파이 라오미엔", kr: "수제 수타면 (퍼포먼스 면)", price: "7" },
+            { cn: "自助调料", py: "zìzhù tiáoliào", kr_read: "쯔주 티아오리아오", kr: "소스바 이용료 (1인당)", price: "10" }
+        ]
+    },
+    jiangbian: {
+        "생선 선택": [
+            { cn: "湄公鱼", py: "méigōng yú", kr_read: "메이꽁 위", kr: "메콩강 메기 (살이 부드럽고 가시 적음)", price: "148~" },
+            { cn: "清江鱼", py: "qīngjiāng yú", kr_read: "칭지앙 위", kr: "칭장어 (가장 인기 많음)", price: "158~" },
+            { cn: "海鲈鱼", py: "hǎilúyú", kr_read: "하이루위", kr: "바다 농어", price: "168~" }
+        ],
+        "맛 선택(소스)": [
+            { cn: "麻辣味", py: "málà wèi", kr_read: "마라 웨이", kr: "마라맛 (매운맛 선호)", price: "0" },
+            { cn: "蒜香味", py: "suànxiāng wèi", kr_read: "쑤안샹 웨이", kr: "마늘맛 (한국인 베스트)", price: "0" },
+            { cn: "酱香味", py: "jiàngxiāng wèi", kr_read: "지앙샹 웨이", kr: "간장 조림맛 (안 매움)", price: "0" },
+            { cn: "怪味", py: "guàiwèi", kr_read: "구아이 웨이", kr: "괴식맛 (매콤+새콤+달콤 복합적 맛)", price: "0" }
+        ],
+        "추가 사리": [
+            { cn: "辅菜全家福", py: "fǔcài quánjiāfú", kr_read: "푸차이 취앤지아푸", kr: "모둠 사리 세트", price: "38" },
+            { cn: "黄金组合", py: "huángjīn zǔhé", kr_read: "황진 주허", kr: "황금 조합 (감자, 버섯, 연근 등)", price: "28" },
+            { cn: "大白菜", py: "dàbáicài", kr_read: "따바이차이", kr: "배추", price: "8" },
+            { cn: "宽粉", py: "kuānfěn", kr_read: "쿠안펀", kr: "중국 당면", price: "10" }
+        ],
+        "사이드/음료": [
+            { cn: "蛋炒饭", py: "dàn chǎofàn", kr_read: "딴 차오판", kr: "계란 볶음밥", price: "18" },
+            { cn: "红糖糍粑", py: "hóngtáng cíbā", kr_read: "홍탕 츠빠", kr: "홍탕 인절미 튀김", price: "22" },
+            { cn: "酸梅汤", py: "suānméitāng", kr_read: "쑤안메이탕", kr: "매실차 (입가심용)", price: "15" }
+        ]
     }
+};
 };
