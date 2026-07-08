@@ -108,11 +108,55 @@ body.layout-none #menu-depth3 { display: none !important; }
 .talk-kr-desc { font-size: 16px; font-weight: 700; color: #333; }
 .talk-copy-tag { font-size: 11px; color: #ff4757; border: 1px solid #ff4757; padding: 3px 8px; border-radius: 6px; font-weight: bold; }
 
-.member-card { background: white; border-radius: 15px; padding: 12px 15px; margin-bottom: 12px; border: 1px solid #eee; }
-.member-header { font-weight: 900; color: #ff4757; margin-bottom: 10px; font-size: 14px; }
-.info-row { display: flex; gap: 10px; margin-bottom: 6px; align-items: center; }
-.info-row label { width: 65px; font-size: 12px; color: #999; font-weight: bold; }
-.info-row input { flex: 1; border: none; border-bottom: 1px solid #ddd; font-size: 15px; padding: 3px 0; outline: none; font-weight: 700; background: transparent; }
+.member-card { 
+    background: white; 
+    border-radius: 15px; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    border: 1px solid #eee; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.member-header { font-weight: 900; color: #ff4757; margin-bottom: 12px; font-size: 15px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; }
+
+.info-row { 
+    display: flex; 
+    gap: 8px; 
+    margin-bottom: 10px; 
+    align-items: center; 
+}
+.info-row label { 
+    width: 75px; 
+    font-size: 11px; 
+    color: #999; 
+    font-weight: bold; 
+    flex-shrink: 0;
+}
+.info-row input { 
+    flex: 1; 
+    border: none; 
+    border-bottom: 1px solid #ddd; 
+    font-size: 14px; 
+    padding: 4px 0; 
+    outline: none; 
+    font-weight: 700; 
+    background: transparent;
+    min-width: 0; /* 넘침 방지 */
+}
+.info-row input:focus { border-bottom-color: #ff4757; }
+
+/* 항목별 복사 버튼 */
+.btn-copy-small {
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #ff4757;
+    background: #fff;
+    border: 1px solid #ff4757;
+    border-radius: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.btn-copy-small:active { background: #ff4757; color: #fff; }
 
 /* 지하철 호선 색상 */
 .line-1 { background-color: #ed1c24; } .line-2 { background-color: #82ba00; } .line-3 { background-color: #ffd800; color: #000; }
