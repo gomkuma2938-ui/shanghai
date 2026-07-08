@@ -26,6 +26,11 @@ function copy(text) {
 function setActiveFooter(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    
+    // 마지막으로 누른 푸터 버튼의 ID를 저장합니다.
+    if (btn.id) {
+        localStorage.setItem('lastTabId', btn.id);
+    }
 }
 
 // 앱 레이아웃 모드 설정 (all: 2줄바, mid: 1줄바, none: 바없음)
@@ -42,13 +47,25 @@ function setAppLayout(mode) {
     } else if (mode === 'mid') {
         depth3.innerHTML = "";
     }
-    window.scrollTo(0, 0);
+    
+    // 내용이 바뀌기 전후로 스크롤을 맨 위로 보냅니다.
+    window.scrollTo(0, 0); 
+    setTimeout(() => window.scrollTo(0, 0), 10); // 렌더링 찰나의 순간 대응
 }
 
 // 3. 초기화 (위치 탭 먼저 실행)
 window.onload = () => {
-    const btnLoc = document.getElementById('btn-loc');
-    if (btnLoc) showLocationTab(btnLoc);
+    const lastTabId = localStorage.getItem('lastTabId') || 'btn-loc'; // 없으면 위치탭 기본
+    const btn = document.getElementById(lastTabId);
+    
+    if (btn) {
+        // 저장된 탭 ID에 따라 해당 함수 실행
+        if (lastTabId === 'btn-loc') showLocationTab(btn);
+        else if (lastTabId === 'btn-menu') showMenuTab(btn);
+        else if (lastTabId === 'btn-calc') showCalcTab(btn);
+        else if (lastTabId === 'btn-talk') showTalkTab(btn);
+        else if (lastTabId === 'btn-info') showInfoTab(btn);
+    }
 };
 
 // ==========================================
