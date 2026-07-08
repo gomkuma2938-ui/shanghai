@@ -298,22 +298,26 @@ function renderTalkCategory(cat, btn) {
 }
 
 // ==========================================
-// [탭 5: 정보 (멤버/일정) 관련]
+// [탭 5: 정보 (멤버/일정) 관련] - 3뎁스 구조 개편
 // ==========================================
 
 function showInfoTab(btn) {
+    // 일단 2뎁스만 보이는 mid 모드로 시작
     setAppLayout('mid');
     setActiveFooter(btn);
 
     document.getElementById('menu-depth2').innerHTML = `
         <button onclick="renderInfoMembers(this)">일행 정보</button>
-        <button onclick="renderInfoSchedule(this)">여행 일정</button>
+        <button onclick="renderInfoScheduleTab(this)">여행 일정</button>
     `;
+    
+    // 기본값으로 일행 정보 표시
     renderInfoMembers(document.querySelector('#menu-depth2 button'));
 }
 
-// 일행 정보 화면
+// 5-1. 일행 정보 화면 (2뎁스 유지)
 function renderInfoMembers(btn) {
+    setAppLayout('mid'); // 3뎁스 숨김
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
@@ -341,27 +345,43 @@ function renderInfoMembers(btn) {
     document.getElementById('app').innerHTML = html + `</div>`;
 }
 
-// 여행 일정 화면
-function renderInfoSchedule(btn) {
+// 5-2. 여행 일정 탭 설정 (3뎁스 활성화)
+function renderInfoScheduleTab(btn) {
+    setAppLayout('all'); // 3뎁스(depth3) 바 보이기 모드로 전환
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
     const sch = window.scheduleData || {};
     const days = Object.keys(sch);
+
+    // 3뎁스 바에 1일차, 2일차... 버튼 생성
+    document.getElementById('menu-depth3').innerHTML = days.map((day, idx) => `
+        <button onclick="renderDaySchedule('${day}', this)">${day}</button>
+    `).join('');
+
+    // 첫 번째 날짜 일정 자동 로드
+    renderDaySchedule(days[0], document.querySelector('#menu-depth3 button'));
+}
+
+// 5-3. 실제 특정 날짜의 일정 렌더링
+function renderDaySchedule(day, btn) {
+    document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const sch = window.scheduleData[day] || [];
     let html = `<div style="padding:10px 5px;">`;
 
-    days.forEach(day => {
-        html += `<div class="talk-category-title">${day}</div>`;
-        html += sch[day].map(s => `
-            <div class="schedule-item">
-                <div class="sch-time">${s.time}</div>
-                <div class="sch-info">
-                    <div class="sch-title">${s.title}</div>
-                    <div class="sch-memo">${s.memo}</div>
-                </div>
-            </div>`).join('');
-    });
+    html += sch.map(s => `
+        <div class="schedule-item">
+            <div class="sch-time">${s.time}</div>
+            <div class="sch-info">
+                <div class="sch-title">${s.title}</div>
+                <div class="sch-memo">${s.memo}</div>
+            </div>
+        </div>`).join('');
+    
     document.getElementById('app').innerHTML = html + `</div>`;
+    window.scrollTo(0, 0);
 }
 
 // 보조: 정보 입력 행 구성
