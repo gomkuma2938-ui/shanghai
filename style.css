@@ -17,9 +17,18 @@ body {
 
 /* 뎁스 2 (상단 첫번째 줄) */
 #menu-depth2 { 
-    top: 0; height: 50px; background: #fff; z-index: 999; border-bottom: 1px solid #ddd;
-    padding: 0 10px; justify-content: flex-start;
+    position: fixed; top: 0; width: 100%; height: 50px; 
+    display: flex; align-items: center;
+    background: #fff; z-index: 999; border-bottom: 1px solid #ddd;
+    overflow-x: auto; white-space: nowrap;
+    -webkit-overflow-scrolling: touch; 
+    padding: 0 10px;
+    justify-content: flex-start; /* 왼쪽 잘림 방지를 위해 시작점은 왼쪽 */
 }
+/* 가운데 정렬을 위한 핵심: 양쪽에 투명한 가짜 요소를 만들어 여백을 자동으로 채움 */
+#menu-depth2::before, #menu-depth2::after { content: ''; margin: auto; }
+#menu-depth2::-webkit-scrollbar { display: none; }
+
 #menu-depth2 button { 
     flex: 0 0 auto; /* 버튼 크기 유지 (스크롤 핵심) */
     padding: 0 18px; height: 100%; border: none; background: none; 
@@ -29,15 +38,23 @@ body {
 
 /* 뎁스 3 (상단 두번째 줄 - 회색) */
 #menu-depth3 { 
-    top: 50px; height: 55px; background: #f9f9f9; z-index: 998; border-bottom: 1px solid #eee;
-    gap: 8px; padding: 0 15px; justify-content: flex-start;
+    position: fixed; top: 50px; width: 100%; height: 55px; 
+    display: flex; align-items: center; 
+    background: #f9f9f9; z-index: 998; border-bottom: 1px solid #eee;
+    overflow-x: auto; white-space: nowrap;
+    gap: 8px; padding: 0 15px;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start; /* 왼쪽 잘림 방지 */
 }
+/* 가운데 정렬을 위한 핵심 */
+#menu-depth3::before, #menu-depth3::after { content: ''; margin: auto; }
+#menu-depth3::-webkit-scrollbar { display: none; }
+
 #menu-depth3 button { 
     flex: 0 0 auto; padding: 8px 18px; border-radius: 20px; 
     border: 1px solid #ccc; background: white; cursor: pointer; font-size: 14px; 
 }
 #menu-depth3 button.active { background: #333; color: white; border-color: #333; }
-
 /* --- 레이아웃 모드 (상단바 유무에 따른 여백 조절) --- */
 
 /* 1. 전체 보임 (위치, 메뉴 탭) */
