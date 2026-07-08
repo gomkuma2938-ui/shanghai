@@ -75,8 +75,29 @@ body {
 }
 
 .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 65px; z-index: 1000; }
-.footer button { flex: 1; border: none; background: white; font-weight: bold; font-size: 16px; color: #888; }
+.footer button { flex: 1; border: none; background: white; font-weight: bold; font-size: 13px; color: #888; }
 .footer button.active { background: #333; color: white; }
+
+/* 상단바 강제 숨기기 클래스 */
+body.hide-top-bar #menu-depth2, 
+body.hide-top-bar #menu-depth3 { 
+    display: none !important; 
+}
+body.hide-top-bar #app { 
+    padding-top: 20px !important; 
+}
+
+/* 입력창 및 일행 카드 스타일 */
+.member-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #eee; }
+.member-header { font-weight: 900; color: #ff4757; margin-bottom: 10px; font-size: 14px; }
+.info-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
+.info-row label { width: 60px; font-size: 12px; color: #999; font-weight: bold; }
+.info-row input { flex: 1; border: none; border-bottom: 1px solid #ddd; font-size: 15px; padding: 3px 0; outline: none; font-weight: 700; background: transparent; }
+
+/* 회화 아이템 스타일 */
+.talk-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.talk-cn { font-size: 19px; font-weight: 900; color: #000; margin-bottom: 4px; }
+.talk-kr { font-size: 14px; color: #666; }
 
 .line-1 { background-color: #ed1c24; } .line-2 { background-color: #82ba00; } .line-3 { background-color: #ffd800; color: #000; }
 .line-4 { background-color: #320177; } .line-6 { background-color: #d11270; } .line-7 { background-color: #ed6c00; }
