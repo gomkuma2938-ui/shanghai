@@ -60,32 +60,35 @@ function showCalcTab(btn) {
     renderCalculator(); // 기존 계산기 렌더링 함수 호출
 }
 
-// --- 4. 회화 탭 (데이터 파일 분리 버전) ---
+// --- 4. 회화 탭 렌더링 ---
 function showTalkTab(btn) {
-    setTopBar(false); // 상단바 숨김
+    setTopBar(false); 
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    const talks = window.talkData || []; // data/talk.js에서 가져옴
+    const talkData = window.talkData || {};
+    const categories = Object.keys(talkData);
 
-    if (talks.length === 0) {
-        document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">회화 데이터가 없습니다.</div>`;
-        return;
-    }
+    let html = `<div style="padding:10px 5px;">
+                <div style="font-weight:900; font-size:22px; margin-bottom:20px;">🗣️ 필수 회화</div>`;
 
-    document.getElementById('app').innerHTML = `
-        <div style="padding:10px 5px;">
-            <div style="font-weight:900; font-size:20px; margin-bottom:20px;">🗣️ 필수 회화 (클릭 시 복사)</div>
-            ${talks.map(t => `
-                <div class="talk-item" onclick="copy('${t.cn}')">
-                    <div>
-                        <div class="talk-cn">${t.cn}</div>
-                        <div class="talk-kr">${t.kr}</div>
-                    </div>
-                    <span style="color:#ff4757; font-size:12px; font-weight:bold;">복사</span>
+    categories.forEach(cat => {
+        html += `<div class="talk-category-title">${cat}</div>`;
+        html += talkData[cat].map(t => `
+            <div class="talk-item" onclick="copy('${t.cn}')">
+                <div style="flex:1">
+                    <div class="talk-cn">${t.cn}</div>
+                    <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
+                    <div class="talk-kr-desc">${t.kr}</div>
                 </div>
-            `).join('')}
-        </div>`;
+                <div class="talk-copy-tag">복사</div>
+            </div>
+        `).join('');
+    });
+
+    html += `</div>`;
+    document.getElementById('app').innerHTML = html;
+    window.scrollTo(0, 0);
 }
 
 // --- 5. 정보 탭 (일행 4명 정보 + 만료일 추가) ---
