@@ -294,24 +294,40 @@ function showTalkTab(btn) {
     renderTalkCategory(categories[0], document.querySelector('#menu-depth2 button'));
 }
 
+// 회화 카테고리 렌더링 (복사 삭제, 강조 기능 추가)
 function renderTalkCategory(cat, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
     const items = window.talkData[cat] || [];
     document.getElementById('app').innerHTML = `
-        <div style="padding:10px 5px;">
-            ${items.map(t => `
-                <div class="talk-item" onclick="copy('${t.cn}')">
+        <div style="padding:10px 5px;" id="talk-list">
+            ${items.map((t, idx) => `
+                <div class="talk-item" onclick="toggleTalkHighlight(this)">
                     <div style="flex:1">
                         <div class="talk-cn">${t.cn}</div>
                         <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
                         <div class="talk-kr-desc">${t.kr}</div>
                     </div>
-                    <div class="talk-copy-tag">복사</div>
                 </div>
             `).join('')}
         </div>`;
+    window.scrollTo(0, 0);
+}
+
+// 회화 강조 토글 함수 (페이지당 1개만 가능)
+function toggleTalkHighlight(el) {
+    const isAlreadyActive = el.classList.contains('active');
+    
+    // 1. 일단 모든 강조 해제
+    document.querySelectorAll('.talk-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    // 2. 이미 강조된 걸 누른 게 아니라면, 지금 누른 것만 강조
+    if (!isAlreadyActive) {
+        el.classList.add('active');
+    }
 }
 
 // ==========================================
