@@ -88,10 +88,27 @@ body.hide-top-bar #app {
 }
 
 /* 입력창 및 일행 카드 스타일 */
-.member-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #eee; }
+.member-card { 
+    background: white; 
+    border-radius: 15px; 
+    padding: 12px 15px; /* 패딩 살짝 축소 */
+    margin-bottom: 12px; 
+    border: 1px solid #eee; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 .member-header { font-weight: 900; color: #ff4757; margin-bottom: 10px; font-size: 14px; }
-.info-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
-.info-row label { width: 60px; font-size: 12px; color: #999; font-weight: bold; }
+.info-row { 
+    display: flex; 
+    gap: 10px; 
+    margin-bottom: 6px; /* 줄 간격 살짝 축소 */
+    align-items: center; 
+}
+.info-row label { 
+    width: 65px; /* 라벨 너비 살짝 확대 (여권만료 글자 대응) */
+    font-size: 12px; 
+    color: #999; 
+    font-weight: bold; 
+}
 .info-row input { flex: 1; border: none; border-bottom: 1px solid #ddd; font-size: 15px; padding: 3px 0; outline: none; font-weight: 700; background: transparent; }
 
 /* 회화 아이템 스타일 */
