@@ -18,20 +18,24 @@ window.onload = () => {
     if (btnLoc) showLocationTab(btnLoc);
 };
 
-// --- 탭 전환 공통 제어 ---
+// --- 탭 전환 및 상단바 제어 통합 함수 ---
 function setTopBar(isVisible) {
+    const depth2 = document.getElementById('menu-depth2');
+    const depth3 = document.getElementById('menu-depth3');
+
     if (isVisible) {
         document.body.classList.remove('hide-top-bar');
     } else {
         document.body.classList.add('hide-top-bar');
-        document.getElementById('menu-depth2').innerHTML = "";
-        document.getElementById('menu-depth3').innerHTML = "";
+        // 내용 비우기 (공간 제거를 위해 중요)
+        if (depth2) depth2.innerHTML = "";
+        if (depth3) depth3.innerHTML = "";
     }
 }
 
-// 1. 위치 탭
+// 1. 위치 탭 (상단바 보임)
 function showLocationTab(btn) {
-    setTopBar(true);
+    setTopBar(true); 
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('menu-depth2').innerHTML = `
@@ -41,7 +45,7 @@ function showLocationTab(btn) {
     renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
-// 2. 메뉴 탭
+// 2. 메뉴 탭 (상단바 보임)
 function showMenuTab(btn) {
     setTopBar(true);
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
@@ -52,25 +56,23 @@ function showMenuTab(btn) {
     loadMenu(resKeys[0], document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
-// 3. 계산기 탭
+// 3. 계산기 탭 (상단바 숨김)
 function showCalcTab(btn) {
     setTopBar(false);
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    renderCalculator(); // 기존 계산기 렌더링 함수 호출
+    renderCalculator(); // 기존에 작성된 계산기 렌더링 함수 실행
 }
 
-// --- 4. 회화 탭 렌더링 ---
+// 4. 회화 탭 (상단바 숨김 + 기존 분류 로직)
 function showTalkTab(btn) {
-    setTopBar(false); 
+    setTopBar(false);
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
     const talkData = window.talkData || {};
     const categories = Object.keys(talkData);
-
-    let html = `<div style="padding:10px 5px;">
-                <div style="font-weight:900; font-size:22px; margin-bottom:20px;">🗣️ 필수 회화</div>`;
+    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:22px; margin-bottom:20px;">🗣️ 필수 회화</div>`;
 
     categories.forEach(cat => {
         html += `<div class="talk-category-title">${cat}</div>`;
@@ -82,54 +84,34 @@ function showTalkTab(btn) {
                     <div class="talk-kr-desc">${t.kr}</div>
                 </div>
                 <div class="talk-copy-tag">복사</div>
-            </div>
-        `).join('');
+            </div>`).join('');
     });
-
-    html += `</div>`;
-    document.getElementById('app').innerHTML = html;
+    document.getElementById('app').innerHTML = html + `</div>`;
     window.scrollTo(0, 0);
 }
 
-// --- 5. 정보 탭 (일행 4명 정보 + 만료일 추가) ---
+// 5. 정보 탭 (상단바 숨김 + 4명 정보 로직)
 function showInfoTab(btn) {
-    setTopBar(false); // 상단바 숨김
+    setTopBar(false);
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    let html = `<div style="padding:10px 5px;">
-                <div style="font-weight:900; font-size:20px; margin-bottom:20px;">👥 일행 정보 (4명)</div>`;
-    
+    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:20px; margin-bottom:20px;">👥 일행 정보 (4명)</div>`;
     for (let i = 1; i <= 4; i++) {
-        // 로컬 저장소에서 데이터 불러오기
         const n = localStorage.getItem(`mem-n-${i}`) || "";
         const p = localStorage.getItem(`mem-p-${i}`) || "";
         const b = localStorage.getItem(`mem-b-${i}`) || "";
-        const e = localStorage.getItem(`mem-e-${i}`) || ""; // 만료일 추가
-
+        const e = localStorage.getItem(`mem-e-${i}`) || "";
         html += `
             <div class="member-card">
                 <div class="member-header">멤버 ${i}</div>
-                <div class="info-row">
-                    <label>이름</label>
-                    <input type="text" id="n-${i}" value="${n}" onchange="saveMem(${i})" placeholder="성명">
-                </div>
-                <div class="info-row">
-                    <label>여권번호</label>
-                    <input type="text" id="p-${i}" value="${p}" onchange="saveMem(${i})" placeholder="M00000000">
-                </div>
-                <div class="info-row">
-                    <label>생년월일</label>
-                    <input type="text" id="b-${i}" value="${b}" onchange="saveMem(${i})" placeholder="YYMMDD">
-                </div>
-                <div class="info-row">
-                    <label>여권만료</label>
-                    <input type="text" id="e-${i}" value="${e}" onchange="saveMem(${i})" placeholder="YYYY-MM-DD">
-                </div>
+                <div class="info-row"><label>이름</label><input type="text" id="n-${i}" value="${n}" onchange="saveMem(${i})" placeholder="성명"></div>
+                <div class="info-row"><label>여권번호</label><input type="text" id="p-${i}" value="${p}" onchange="saveMem(${i})" placeholder="M00000000"></div>
+                <div class="info-row"><label>생년월일</label><input type="text" id="b-${i}" value="${b}" onchange="saveMem(${i})" placeholder="YYMMDD"></div>
+                <div class="info-row"><label>여권만료</label><input type="text" id="e-${i}" value="${e}" onchange="saveMem(${i})" placeholder="YYYY-MM-DD"></div>
             </div>`;
     }
-    html += `<p style="font-size:11px; color:#999; text-align:center; line-height:1.4;">입력 시 자동 저장되며, 본인 기기에만 남습니다.<br>여권 만료일은 YYYY-MM-DD 형식으로 적어두면 편리합니다.</p></div>`;
-    document.getElementById('app').innerHTML = html;
+    document.getElementById('app').innerHTML = html + `<p style="font-size:11px; color:#999; text-align:center;">입력 시 자동 저장되며 본인 기기에만 남습니다.</p></div>`;
 }
 
 // 저장 로직 (만료일 포함)
