@@ -18,8 +18,9 @@ window.onload = () => {
     if (btnLoc) showLocationTab(btnLoc);
 };
 
-// --- 위치 탭 로직 ---
+// --- 위치 탭 (상단바 보임) ---
 function showLocationTab(btn) {
+    document.body.classList.remove('hide-top-menu'); // 상단바 보이기
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('menu-depth2').innerHTML = `
@@ -27,6 +28,31 @@ function showLocationTab(btn) {
         <button onclick="renderLocation('tour', this)">관광지</button>
         <button onclick="renderLocation('restaurant', this)">식당</button>`;
     renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
+}
+
+// --- 메뉴 탭 (상단바 보임) ---
+function showMenuTab(btn) {
+    document.body.classList.remove('hide-top-menu'); // 상단바 보이기
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (!window.menuData) { alert("menu_data.js 파일을 찾을 수 없습니다."); return; }
+    const resKeys = Object.keys(window.menuData);
+    document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
+        <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>`).join('');
+    loadMenu(resKeys[0], document.querySelectorAll('#menu-depth2 button')[0]);
+}
+
+// --- 계산기 탭 (상단바 숨김) ---
+function showCalcTab(btn) {
+    document.body.classList.add('hide-top-menu'); // 상단바 숨기기!!
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // 내용 비우기
+    document.getElementById('menu-depth2').innerHTML = "";
+    document.getElementById('menu-depth3').innerHTML = "";
+    
+    renderCalculator();
 }
 
 function renderLocation(cat, btn) {
