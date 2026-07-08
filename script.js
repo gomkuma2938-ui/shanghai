@@ -5,6 +5,7 @@ const resName = {
     jiangbian: '강변성외'
 };
 
+// --- 공통 기능 ---
 function copy(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
@@ -16,6 +17,27 @@ window.onload = () => {
     const btnLoc = document.getElementById('btn-loc');
     if (btnLoc) showLocationTab(btnLoc);
 };
+
+// --- 위치 탭 로직 ---
+function showLocationTab(btn) {
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('menu-depth2').innerHTML = `
+        <button onclick="renderLocation('hotel', this)">호텔/공항</button>
+        <button onclick="renderLocation('tour', this)">관광지</button>
+        <button onclick="renderLocation('restaurant', this)">식당</button>`;
+    renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
+}
+
+function renderLocation(cat, btn) {
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const list = window[cat + 'Data'];
+    if(!list) { alert(cat + " 데이터 파일이 없습니다."); return; }
+    document.getElementById('menu-depth3').innerHTML = list.map((i, idx) => `
+        <button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>`).join('');
+    renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
+}
 
 function renderLocCard(cat, idx, btn) {
     const list = window[cat + 'Data'];
@@ -43,20 +65,15 @@ function renderLocCard(cat, idx, btn) {
     let descHtml = "";
     if (item.desc) {
         const lines = item.desc.split('\n');
-        const firstLine = lines[0]; // 제목(첫 줄)
-        const remainingText = lines.slice(1).join('\n').trim(); // 나머지 본문
+        const firstLine = lines[0];
+        const remainingText = lines.slice(1).join('\n').trim();
         
-        // 온점이 아니라 실제 줄바꿈(\n)을 기준으로 문단을 나눔
         const bodyHtml = remainingText.split('\n').map(p => {
             if (!p.trim()) return '';
             return `<p class="desc-para">${p.trim()}</p>`; 
         }).join('');
         
-        descHtml = `
-            <div class="desc">
-                <div class="desc-header">${firstLine}</div>
-                <div class="desc-body">${bodyHtml}</div>
-            </div>`;
+        descHtml = `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
     }
     
     document.getElementById('app').innerHTML = `
@@ -77,30 +94,11 @@ function renderLocCard(cat, idx, btn) {
     window.scrollTo(0, 0);
 }
 
-function showLocationTab(btn) {
-    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('menu-depth2').innerHTML = `
-        <button onclick="renderLocation('hotel', this)">호텔/공항</button>
-        <button onclick="renderLocation('tour', this)">관광지</button>
-        <button onclick="renderLocation('restaurant', this)">식당</button>`;
-    renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
-}
-
-function renderLocation(cat, btn) {
-    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const list = window[cat + 'Data'];
-    if(!list) { alert(cat + " 데이터 파일이 없습니다."); return; }
-    document.getElementById('menu-depth3').innerHTML = list.map((i, idx) => `
-        <button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>`).join('');
-    renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
-}
-
+// --- 메뉴 탭 로직 ---
 function showMenuTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    if (!window.menuData) { alert("menu_data.js 파일을 찾을 수 없거나 데이터가 비어있습니다."); return; }
+    if (!window.menuData) { alert("menu_data.js 파일을 찾을 수 없습니다."); return; }
     const resKeys = Object.keys(window.menuData);
     document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
         <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>`).join('');
@@ -134,7 +132,7 @@ function renderMenu(res, cat, btn) {
     window.scrollTo(0, 0);
 }
 
-// --- 계산기 관련 로직 ---
+// --- 계산기 탭 로직 (추가됨) ---
 let calcExpr = "0"; 
 let currentRate = localStorage.getItem('exchangeRate') || 223.0;
 
@@ -142,7 +140,7 @@ function showCalcTab(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    // 상단 메뉴바 숨기기
+    // 상단 메뉴 초기화
     document.getElementById('menu-depth2').innerHTML = "";
     document.getElementById('menu-depth3').innerHTML = "";
     
@@ -157,33 +155,27 @@ function renderCalculator() {
                 <div class="display-cny" id="cny-val">0 CNY</div>
                 <div class="display-krw" id="krw-val">0<span>원</span></div>
             </div>
-            
             <div class="calc-grid">
                 <button class="ac" onclick="pressCalc('AC')">AC</button>
                 <button class="op" onclick="pressCalc('DEL')">DEL</button>
                 <button class="op" onclick="pressCalc('/')">÷</button>
                 <button class="op" onclick="pressCalc('*')">×</button>
-                
                 <button onclick="pressCalc('7')">7</button>
                 <button onclick="pressCalc('8')">8</button>
                 <button onclick="pressCalc('9')">9</button>
                 <button class="op" onclick="pressCalc('-')">-</button>
-                
                 <button onclick="pressCalc('4')">4</button>
                 <button onclick="pressCalc('5')">5</button>
                 <button onclick="pressCalc('6')">6</button>
                 <button class="op" onclick="pressCalc('+')">+</button>
-                
                 <button onclick="pressCalc('1')">1</button>
                 <button onclick="pressCalc('2')">2</button>
                 <button onclick="pressCalc('3')">3</button>
                 <button onclick="pressCalc('.')">.</button>
-                
                 <button onclick="pressCalc('0')">0</button>
                 <button onclick="pressCalc('00')">00</button>
                 <button class="eq" onclick="pressCalc('=')">=</button>
             </div>
-            
             <div class="rate-setting">
                 <label>환율 설정 (1¥ = )</label>
                 <div class="rate-input-wrap">
@@ -191,8 +183,7 @@ function renderCalculator() {
                     <span>원</span>
                 </div>
             </div>
-        </div>
-    `;
+        </div>`;
     updateCalcDisplay();
 }
 
@@ -203,10 +194,8 @@ function pressCalc(key) {
         calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
     } else if (key === '=') {
         try {
-            calcExpr = String(eval(calcExpr));
-        } catch {
-            calcExpr = "Error";
-        }
+            calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')));
+        } catch { calcExpr = "Error"; }
     } else {
         if (calcExpr === "0" && key !== '.') calcExpr = key;
         else if (calcExpr === "Error") calcExpr = key;
@@ -222,10 +211,8 @@ function updateCalcDisplay() {
 
     let resultNum = 0;
     try {
-        resultNum = eval(calcExpr) || 0;
-    } catch {
-        resultNum = 0;
-    }
+        resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0;
+    } catch { resultNum = 0; }
 
     cnyElement.innerText = calcExpr + " CNY";
     const krwValue = Math.round(resultNum * currentRate);
