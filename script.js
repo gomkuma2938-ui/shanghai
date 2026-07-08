@@ -5,7 +5,6 @@ const resName = {
     jiangbian: '강변성외'
 };
 
-// --- [공통] 텍스트 복사 기능 ---
 function copy(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
@@ -13,37 +12,38 @@ function copy(text) {
     });
 }
 
-// 초기 로드 시 위치 탭 활성화
 window.onload = () => {
     const btnLoc = document.getElementById('btn-loc');
     if (btnLoc) showLocationTab(btnLoc);
 };
 
-// --- [핵심] 레이아웃 및 상단바 제어 함수 ---
-function setAppLayout(showBar) {
+// --- [핵심] 레이아웃 제어 함수 ---
+function setAppLayout(mode) {
     const depth2 = document.getElementById('menu-depth2');
     const depth3 = document.getElementById('menu-depth3');
+    
+    // 1. 모든 레이아웃 클래스 제거 후 해당 모드 추가
+    document.body.classList.remove('layout-all', 'layout-mid', 'layout-none');
+    document.body.classList.add('layout-' + mode);
 
-    if (showBar) {
-        document.body.classList.remove('hide-top-bar');
-    } else {
-        document.body.classList.add('hide-top-bar');
-        // 계산기/정보 탭으로 갈 때 이전 메뉴 내용 삭제 (공간 확보)
+    // 2. 모드별 내용 청소
+    if (mode === 'none') {
         if (depth2) depth2.innerHTML = "";
         if (depth3) depth3.innerHTML = "";
+    } else if (mode === 'mid') {
+        if (depth3) depth3.innerHTML = ""; // 회화 탭에서는 뎁스3 아예 비움
     }
     window.scrollTo(0, 0);
 }
 
-// 푸터 버튼 활성화 상태 표시
 function setActiveFooter(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
 
-// --- [1. 위치 탭] (상단바 보임) ---
+// 1. 위치 탭
 function showLocationTab(btn) {
-    setAppLayout(true);
+    setAppLayout('all');
     setActiveFooter(btn);
     document.getElementById('menu-depth2').innerHTML = `
         <button onclick="renderLocation('hotel', this)">호텔/공항</button>
@@ -56,7 +56,7 @@ function renderLocation(cat, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const list = window[cat + 'Data'];
-    if(!list) { alert(cat + " 데이터 파일이 없습니다."); return; }
+    if(!list) return;
     document.getElementById('menu-depth3').innerHTML = list.map((i, idx) => `
         <button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>`).join('');
     renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
@@ -84,8 +84,7 @@ function renderLocCard(cat, idx, btn) {
     if (item.desc) {
         const lines = item.desc.split('\n');
         const firstLine = lines[0];
-        const remainingText = lines.slice(1).join('\n').trim();
-        const bodyHtml = remainingText.split('\n').map(p => {
+        const bodyHtml = lines.slice(1).join('\n').trim().split('\n').map(p => {
             if (!p.trim()) return '';
             return `<p class="desc-para">${p.trim()}</p>`; 
         }).join('');
@@ -109,11 +108,10 @@ function renderLocCard(cat, idx, btn) {
     window.scrollTo(0, 0);
 }
 
-// --- [2. 메뉴 탭] (상단바 보임) ---
+// 2. 메뉴 탭
 function showMenuTab(btn) {
-    setAppLayout(true);
+    setAppLayout('all');
     setActiveFooter(btn);
-    if (!window.menuData) { alert("menu_data.js 파일을 찾을 수 없습니다."); return; }
     const resKeys = Object.keys(window.menuData);
     document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
         <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>`).join('');
@@ -123,9 +121,7 @@ function showMenuTab(btn) {
 function loadMenu(res, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const currentResData = window.menuData[res];
-    if(!currentResData) return;
-    const cats = Object.keys(currentResData);
+    const cats = Object.keys(window.menuData[res]);
     document.getElementById('menu-depth3').innerHTML = cats.map(c => `
         <button onclick="renderMenu('${res}', '${c}', this)">${c}</button>`).join('');
     renderMenu(res, cats[0], document.querySelector('#menu-depth3 button'));
@@ -147,12 +143,12 @@ function renderMenu(res, cat, btn) {
     window.scrollTo(0, 0);
 }
 
-// --- [3. 계산기 탭] (상단바 숨김) ---
+// 3. 계산기 탭
 let calcExpr = "0"; 
 let currentRate = localStorage.getItem('exchangeRate') || 223.0;
 
 function showCalcTab(btn) {
-    setAppLayout(false);
+    setAppLayout('none');
     setActiveFooter(btn);
     renderCalculator();
 }
@@ -170,21 +166,10 @@ function renderCalculator() {
                 <button class="op" onclick="pressCalc('DEL')">DEL</button>
                 <button class="op" onclick="pressCalc('/')">÷</button>
                 <button class="op" onclick="pressCalc('*')">×</button>
-                <button onclick="pressCalc('7')">7</button>
-                <button onclick="pressCalc('8')">8</button>
-                <button onclick="pressCalc('9')">9</button>
-                <button class="op" onclick="pressCalc('-')">-</button>
-                <button onclick="pressCalc('4')">4</button>
-                <button onclick="pressCalc('5')">5</button>
-                <button onclick="pressCalc('6')">6</button>
-                <button class="op" onclick="pressCalc('+')">+</button>
-                <button onclick="pressCalc('1')">1</button>
-                <button onclick="pressCalc('2')">2</button>
-                <button onclick="pressCalc('3')">3</button>
-                <button onclick="pressCalc('.')">.</button>
-                <button onclick="pressCalc('0')">0</button>
-                <button onclick="pressCalc('00')">00</button>
-                <button class="eq" onclick="pressCalc('=')">=</button>
+                <button onclick="pressCalc('7')">7</button><button onclick="pressCalc('8')">8</button><button onclick="pressCalc('9')">9</button><button class="op" onclick="pressCalc('-')">-</button>
+                <button onclick="pressCalc('4')">4</button><button onclick="pressCalc('5')">5</button><button onclick="pressCalc('6')">6</button><button class="op" onclick="pressCalc('+')">+</button>
+                <button onclick="pressCalc('1')">1</button><button onclick="pressCalc('2')">2</button><button onclick="pressCalc('3')">3</button><button onclick="pressCalc('.')">.</button>
+                <button onclick="pressCalc('0')">0</button><button onclick="pressCalc('00')">00</button><button class="eq" onclick="pressCalc('=')">=</button>
             </div>
             <div class="rate-setting">
                 <label>환율 설정 (1¥ = )</label>
@@ -198,17 +183,12 @@ function renderCalculator() {
 }
 
 function pressCalc(key) {
-    if (key === 'AC') {
-        calcExpr = "0";
-    } else if (key === 'DEL') {
-        calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
-    } else if (key === '=') {
-        try {
-            calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')));
-        } catch { calcExpr = "Error"; }
+    if (key === 'AC') calcExpr = "0";
+    else if (key === 'DEL') calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
+    else if (key === '=') {
+        try { calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/'))); } catch { calcExpr = "Error"; }
     } else {
         if (calcExpr === "0" && key !== '.') calcExpr = key;
-        else if (calcExpr === "Error") calcExpr = key;
         else calcExpr += key;
     }
     updateCalcDisplay();
@@ -219,12 +199,9 @@ function updateCalcDisplay() {
     const krwElement = document.getElementById('krw-val');
     if (!cnyElement || !krwElement) return;
     let resultNum = 0;
-    try {
-        resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0;
-    } catch { resultNum = 0; }
+    try { resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0; } catch { resultNum = 0; }
     cnyElement.innerText = calcExpr + " CNY";
-    const krwValue = Math.round(resultNum * currentRate);
-    krwElement.innerHTML = krwValue.toLocaleString() + "<span>원</span>";
+    krwElement.innerHTML = Math.round(resultNum * currentRate).toLocaleString() + "<span>원</span>";
 }
 
 function updateRate(val) {
@@ -234,19 +211,13 @@ function updateRate(val) {
     updateCalcDisplay();
 }
 
-// --- [4. 회화 탭] (상단바 보임) ---
+// 4. 회화 탭
 function showTalkTab(btn) {
-    setAppLayout(true);
+    setAppLayout('mid'); // 뎁스3 숨김 모드
     setActiveFooter(btn);
-    const talkData = window.talkData || {};
-    const categories = Object.keys(talkData);
-    if (categories.length === 0) {
-        document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">데이터가 없습니다.</div>`;
-        return;
-    }
+    const categories = Object.keys(window.talkData);
     document.getElementById('menu-depth2').innerHTML = categories.map(cat => `
         <button onclick="renderTalkCategory('${cat}', this)">${cat}</button>`).join('');
-    document.getElementById('menu-depth3').innerHTML = "";
     renderTalkCategory(categories[0], document.querySelector('#menu-depth2 button'));
 }
 
@@ -254,21 +225,20 @@ function renderTalkCategory(cat, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     const items = window.talkData[cat] || [];
-    document.getElementById('app').innerHTML = `<div style="padding:10px 5px;">` + 
-        items.map(t => `
-            <div class="talk-item" onclick="copy('${t.cn}')">
-                <div style="flex:1">
-                    <div class="talk-cn">${t.cn}</div>
-                    <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
-                    <div class="talk-kr-desc">${t.kr}</div>
-                </div>
-                <div class="talk-copy-tag">복사</div>
-            </div>`).join('') + `</div>`;
+    document.getElementById('app').innerHTML = `<div style="padding:10px 5px;">` + items.map(t => `
+        <div class="talk-item" onclick="copy('${t.cn}')">
+            <div style="flex:1">
+                <div class="talk-cn">${t.cn}</div>
+                <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
+                <div class="talk-kr-desc">${t.kr}</div>
+            </div>
+            <div class="talk-copy-tag">복사</div>
+        </div>`).join('') + `</div>`;
 }
 
-// --- [5. 정보 탭] (상단바 숨김) ---
+// 5. 정보 탭
 function showInfoTab(btn) {
-    setAppLayout(false);
+    setAppLayout('none');
     setActiveFooter(btn);
     let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:20px; margin-bottom:20px;">👥 일행 정보 (4명)</div>`;
     for (let i = 1; i <= 4; i++) {
