@@ -7,11 +7,10 @@ body {
     margin: 0; background: #f4f4f4; padding-bottom: 80px; 
 }
 
-/* 상단 메뉴 중앙 정렬 및 왼쪽 잘림 방지 */
+/* 기본 상태: 상단바가 있을 때 (위치, 메뉴, 회화) */
 #menu-depth2 { 
     position: fixed; top: 0; width: 100%; display: flex; 
-    overflow-x: auto; background: #fff; height: 50px; z-index: 999; border-bottom: 1px solid #ddd;
-    justify-content: flex-start; 
+    background: #fff; height: 50px; z-index: 999; border-bottom: 1px solid #ddd;
 }
 #menu-depth2::before, #menu-depth2::after { content: ''; margin: auto; }
 #menu-depth2 button { flex: 0 0 auto; padding: 0 20px; border: none; background: none; font-weight: bold; cursor: pointer; font-size: 15px; color: #777; white-space: nowrap; }
@@ -19,16 +18,17 @@ body {
 
 #menu-depth3 { 
     position: fixed; top: 50px; width: 100%; display: flex; 
-    overflow-x: auto; background: #f9f9f9; height: 55px; align-items: center; 
-    gap: 8px; padding: 0 10px; z-index: 998; border-bottom: 1px solid #eee;
-    justify-content: flex-start;
+    background: #f9f9f9; height: 55px; align-items: center; z-index: 998; border-bottom: 1px solid #eee;
 }
 #menu-depth3::before, #menu-depth3::after { content: ''; margin: auto; }
 #menu-depth3::-webkit-scrollbar { display: none; }
 #menu-depth3 button { padding: 8px 18px; border-radius: 20px; border: 1px solid #ccc; background: white; flex-shrink: 0; cursor: pointer; font-size: 14px; }
 #menu-depth3 button.active { background: #333; color: white; border-color: #333; }
 
-#app { padding: 120px 10px 20px 10px; min-height: 100vh; }
+#app { 
+    padding: 120px 10px 20px 10px !important; /* 기본 패딩 120px */
+    min-height: 100vh; 
+}
 
 .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
 .card .kr-med { font-size: 18px; color: #333; font-weight: 700; margin-bottom: 8px; }
@@ -76,20 +76,18 @@ body {
 
 .footer { position: fixed; bottom: 0; width: 100%; display: flex; background: #fff; border-top: 1px solid #ddd; height: 65px; z-index: 1000; }
 .footer button { flex: 1; border: none; background: white; font-weight: bold; font-size: 13px; color: #888; }
-.footer button.active { background: #333; color: white; }
-
-/* 상단바 강제 숨기기 클래스 */
-/* body에 hide-top-bar 클래스가 붙으면 상단 메뉴 영역을 완전히 제거 */
-body.hide-top-bar #menu-depth2, 
-body.hide-top-bar #menu-depth3 { 
-    display: none !important; 
-    height: 0 !important;
-    border: none !important;
+.footer button.active { 
+    background: #333 !important; 
+    color: white !important; 
 }
 
-/* 상단바가 없을 때 앱 영역의 여백을 20px로 강제 고정 */
+/* 상단바 숨김 상태: 계산기, 정보 탭 전용 */
+body.hide-top-bar #menu-depth2, 
+body.hide-top-bar #menu-depth3 { 
+    display: none !important; /* 물리적으로 완전히 제거 */
+}
 body.hide-top-bar #app { 
-    padding-top: 20px !important; 
+    padding-top: 20px !important; /* 패딩을 20px로 강제 축소 */
 }
 
 /* 입력창 및 일행 카드 스타일 */
