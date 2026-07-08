@@ -79,10 +79,15 @@ body {
 .footer button.active { background: #333; color: white; }
 
 /* 상단바 강제 숨기기 클래스 */
+/* body에 hide-top-bar 클래스가 붙으면 상단 메뉴 영역을 완전히 제거 */
 body.hide-top-bar #menu-depth2, 
 body.hide-top-bar #menu-depth3 { 
     display: none !important; 
+    height: 0 !important;
+    border: none !important;
 }
+
+/* 상단바가 없을 때 앱 영역의 여백을 20px로 강제 고정 */
 body.hide-top-bar #app { 
     padding-top: 20px !important; 
 }
