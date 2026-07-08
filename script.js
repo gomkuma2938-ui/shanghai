@@ -133,3 +133,108 @@ function renderMenu(res, cat, btn) {
         </div>`).join('');
     window.scrollTo(0, 0);
 }
+
+// --- 계산기 관련 로직 ---
+let calcExpr = "0"; 
+let currentRate = localStorage.getItem('exchangeRate') || 223.0;
+
+function showCalcTab(btn) {
+    document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // 상단 메뉴바 숨기기
+    document.getElementById('menu-depth2').innerHTML = "";
+    document.getElementById('menu-depth3').innerHTML = "";
+    
+    renderCalculator();
+}
+
+function renderCalculator() {
+    const app = document.getElementById('app');
+    app.innerHTML = `
+        <div class="calc-container">
+            <div class="calc-display">
+                <div class="display-cny" id="cny-val">0 CNY</div>
+                <div class="display-krw" id="krw-val">0<span>원</span></div>
+            </div>
+            
+            <div class="calc-grid">
+                <button class="ac" onclick="pressCalc('AC')">AC</button>
+                <button class="op" onclick="pressCalc('DEL')">DEL</button>
+                <button class="op" onclick="pressCalc('/')">÷</button>
+                <button class="op" onclick="pressCalc('*')">×</button>
+                
+                <button onclick="pressCalc('7')">7</button>
+                <button onclick="pressCalc('8')">8</button>
+                <button onclick="pressCalc('9')">9</button>
+                <button class="op" onclick="pressCalc('-')">-</button>
+                
+                <button onclick="pressCalc('4')">4</button>
+                <button onclick="pressCalc('5')">5</button>
+                <button onclick="pressCalc('6')">6</button>
+                <button class="op" onclick="pressCalc('+')">+</button>
+                
+                <button onclick="pressCalc('1')">1</button>
+                <button onclick="pressCalc('2')">2</button>
+                <button onclick="pressCalc('3')">3</button>
+                <button onclick="pressCalc('.')">.</button>
+                
+                <button onclick="pressCalc('0')">0</button>
+                <button onclick="pressCalc('00')">00</button>
+                <button class="eq" onclick="pressCalc('=')">=</button>
+            </div>
+            
+            <div class="rate-setting">
+                <label>환율 설정 (1¥ = )</label>
+                <div class="rate-input-wrap">
+                    <input type="number" id="rate-input" value="${currentRate}" step="0.1" oninput="updateRate(this.value)">
+                    <span>원</span>
+                </div>
+            </div>
+        </div>
+    `;
+    updateCalcDisplay();
+}
+
+function pressCalc(key) {
+    if (key === 'AC') {
+        calcExpr = "0";
+    } else if (key === 'DEL') {
+        calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
+    } else if (key === '=') {
+        try {
+            calcExpr = String(eval(calcExpr));
+        } catch {
+            calcExpr = "Error";
+        }
+    } else {
+        if (calcExpr === "0" && key !== '.') calcExpr = key;
+        else if (calcExpr === "Error") calcExpr = key;
+        else calcExpr += key;
+    }
+    updateCalcDisplay();
+}
+
+function updateCalcDisplay() {
+    const cnyElement = document.getElementById('cny-val');
+    const krwElement = document.getElementById('krw-val');
+    if (!cnyElement || !krwElement) return;
+
+    let resultNum = 0;
+    try {
+        resultNum = eval(calcExpr) || 0;
+    } catch {
+        resultNum = 0;
+    }
+
+    cnyElement.innerText = calcExpr + " CNY";
+    const krwValue = Math.round(resultNum * currentRate);
+    krwElement.innerHTML = krwValue.toLocaleString() + "<span>원</span>";
+}
+
+function updateRate(val) {
+    if (!val || val <= 0) return;
+    currentRate = parseFloat(val);
+    localStorage.setItem('exchangeRate', currentRate);
+    updateCalcDisplay();
+}
