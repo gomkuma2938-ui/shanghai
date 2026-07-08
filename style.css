@@ -106,10 +106,32 @@ body.layout-none #menu-depth3 { display: none !important; }
 .footer button.active { background: #333 !important; color: white !important; }
 
 /* 회화/정보 전용 스타일 */
-.talk-item { background: white; padding: 18px; border-radius: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.talk-item {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent; /* 기본 테두리 */
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* 강조되었을 때 (클릭 시) */
+.talk-item.active {
+    background: #fff9c4 !important; /* 연한 노란색 배경 */
+    border-color: #ff4757 !important; /* 빨간색 테두리 */
+    transform: scale(1.02); /* 살짝 커짐 */
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
+}
+
+.talk-item.active .talk-cn {
+    color: #ff4757; /* 중국어 글자색 변경 */
+    font-size: 26px; /* 글자 크기 확대 */
+}
 .talk-cn { font-size: 22px; font-weight: 900; color: #000; margin-bottom: 4px; }
 .talk-kr-desc { font-size: 16px; font-weight: 700; color: #333; }
-.talk-copy-tag { font-size: 11px; color: #ff4757; border: 1px solid #ff4757; padding: 3px 8px; border-radius: 6px; font-weight: bold; }
 
 .member-card { 
     background: white; 
