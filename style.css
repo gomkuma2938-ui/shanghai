@@ -251,12 +251,3 @@ body.hide-top-bar #app {
     color: #333;
 }
 .rate-input-wrap span { font-weight: 900; color: #333; font-size: 16px; }
-/* style.css 맨 하단에 추가 */
-body.hide-top-menu #menu-depth2, 
-body.hide-top-menu #menu-depth3 { 
-    display: none; 
-}
-
-body.hide-top-menu #app { 
-    padding-top: 20px; /* 120px에서 20px로 대폭 줄임 */
-}
