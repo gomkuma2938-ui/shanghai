@@ -80,6 +80,9 @@ body.layout-none #menu-depth3 { display: none !important; }
 .label-small { font-size: 12px; color: #888; display: block; margin-top: 15px; }
 .content-text { font-size: 18px; color: #333; font-weight: 700; display: block; margin-top: 2px; cursor: pointer; word-break: break-all; }
 
+.label-hours { font-size: 12px; color: #ff4757; font-weight: bold; display: block; margin-top: 15px; }
+.content-hours { font-size: 16px; color: #333; font-weight: 700; margin-top: 2px; }
+
 .subway-line { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 2px; padding: 5px 0 15px 0; border-bottom: 1px solid #eee; cursor: pointer; }
 .cn-sub { font-size: 24px; font-weight: 700; color: #000; } 
 .kr-sub { font-size: 18px; font-weight: 700; color: #333; } 
@@ -175,3 +178,17 @@ body.layout-none #menu-depth3 { display: none !important; }
 .calc-grid button.eq { background: #ff4757; color: white; grid-column: span 2; box-shadow: 0 3px 0 #d63031; }
 .rate-setting { margin-top: 15px; padding: 18px; background: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; }
 .rate-input-wrap input { width: 80px; border: none; border-bottom: 2px solid #ff4757; text-align: center; font-size: 20px; font-weight: 900; outline: none; }
+
+/* --- 일정 탭 전용 스타일 (파일 맨 하단에 추가) --- */
+.schedule-item {
+    display: flex; gap: 15px; background: white;
+    padding: 15px; border-radius: 12px; margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.sch-time {
+    width: 55px; font-weight: 900; color: #ff4757;
+    font-size: 14px; padding-top: 2px; flex-shrink: 0;
+}
+.sch-info { flex: 1; }
+.sch-title { font-size: 16px; font-weight: 800; color: #333; margin-bottom: 4px; }
+.sch-memo { font-size: 13px; color: #888; line-height: 1.4; }
