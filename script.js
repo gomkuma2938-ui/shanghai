@@ -66,26 +66,50 @@ function showCalcTab(btn) {
 
 // 4. 회화 탭 (상단바 숨김 + 기존 분류 로직)
 function showTalkTab(btn) {
-    setTopBar(false);
+    setTopBar(true); // 상단바 다시 보이기 (위치/메뉴와 동일하게)
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
+
     const talkData = window.talkData || {};
     const categories = Object.keys(talkData);
-    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:22px; margin-bottom:20px;">🗣️ 필수 회화</div>`;
 
-    categories.forEach(cat => {
-        html += `<div class="talk-category-title">${cat}</div>`;
-        html += talkData[cat].map(t => `
-            <div class="talk-item" onclick="copy('${t.cn}')">
-                <div style="flex:1">
-                    <div class="talk-cn">${t.cn}</div>
-                    <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
-                    <div class="talk-kr-desc">${t.kr}</div>
-                </div>
-                <div class="talk-copy-tag">복사</div>
-            </div>`).join('');
-    });
+    if (categories.length === 0) {
+        document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">데이터가 없습니다.</div>`;
+        return;
+    }
+
+    // 상단 depth2에 카테고리 버튼 생성
+    document.getElementById('menu-depth2').innerHTML = categories.map(cat => `
+        <button onclick="renderTalkCategory('${cat}', this)">${cat}</button>
+    `).join('');
+    
+    // depth3은 회화에서 필요 없으므로 비움
+    document.getElementById('menu-depth3').innerHTML = "";
+
+    // 첫 번째 카테고리 자동 선택
+    renderTalkCategory(categories[0], document.querySelector('#menu-depth2 button'));
+}
+
+// 특정 카테고리의 회화 목록을 렌더링하는 함수
+function renderTalkCategory(cat, btn) {
+    // 상단 버튼 활성화 상태 표시
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+
+    const items = window.talkData[cat] || [];
+    
+    let html = `<div style="padding:10px 5px;">`;
+    html += items.map(t => `
+        <div class="talk-item" onclick="copy('${t.cn}')">
+            <div style="flex:1">
+                <div class="talk-cn">${t.cn}</div>
+                <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
+                <div class="talk-kr-desc">${t.kr}</div>
+            </div>
+            <div class="talk-copy-tag">복사</div>
+        </div>
+    `).join('');
+    
     document.getElementById('app').innerHTML = html + `</div>`;
     window.scrollTo(0, 0);
 }
