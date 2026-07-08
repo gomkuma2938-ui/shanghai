@@ -1,3 +1,9 @@
+/**
+ * 상하이 여행 가이드 - 로직 스크립트
+ * 모든 기능이 통합된 가독성 중심 버전입니다.
+ */
+
+// 1. 기본 설정 및 상수
 const resName = {
     jiajia: '지아지아탕바오',
     dahuchun: '다후춘',
@@ -5,7 +11,10 @@ const resName = {
     jiangbian: '강변성외'
 };
 
-// --- [공통] 텍스트 복사 기능 ---
+let calcExpr = "0"; // 계산기 입력값
+let currentRate = localStorage.getItem('exchangeRate') || 223.0; // 환율
+
+// 2. 공통 유틸리티 함수
 function copy(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
@@ -13,63 +22,76 @@ function copy(text) {
     });
 }
 
-// 초기 로드 시 위치 탭 활성화
-window.onload = () => {
-    const btnLoc = document.getElementById('btn-loc');
-    if (btnLoc) showLocationTab(btnLoc);
-};
-
-// --- [핵심] 레이아웃 및 상단바 제어 함수 ---
-function setAppLayout(mode) {
-    const depth2 = document.getElementById('menu-depth2');
-    const depth3 = document.getElementById('menu-depth3');
-    
-    document.body.classList.remove('layout-all', 'layout-mid', 'layout-none');
-    document.body.classList.add('layout-' + mode);
-
-    if (mode === 'none') {
-        if (depth2) depth2.innerHTML = "";
-        if (depth3) depth3.innerHTML = "";
-    } else if (mode === 'mid') {
-        if (depth3) depth3.innerHTML = ""; 
-    }
-    window.scrollTo(0, 0);
-}
-
-// 푸터 버튼 활성화 상태 표시
+// 푸터 버튼 활성화 표시
 function setActiveFooter(btn) {
     document.querySelectorAll('.footer button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
 
-// --- [1. 위치 탭] ---
+// 앱 레이아웃 모드 설정 (all: 2줄바, mid: 1줄바, none: 바없음)
+function setAppLayout(mode) {
+    const depth2 = document.getElementById('menu-depth2');
+    const depth3 = document.getElementById('menu-depth3');
+
+    document.body.classList.remove('layout-all', 'layout-mid', 'layout-none');
+    document.body.classList.add('layout-' + mode);
+
+    if (mode === 'none') {
+        depth2.innerHTML = "";
+        depth3.innerHTML = "";
+    } else if (mode === 'mid') {
+        depth3.innerHTML = "";
+    }
+    window.scrollTo(0, 0);
+}
+
+// 3. 초기화 (위치 탭 먼저 실행)
+window.onload = () => {
+    const btnLoc = document.getElementById('btn-loc');
+    if (btnLoc) showLocationTab(btnLoc);
+};
+
+// ==========================================
+// [탭 1: 위치 정보 관련]
+// ==========================================
+
 function showLocationTab(btn) {
     setAppLayout('all');
     setActiveFooter(btn);
+
     document.getElementById('menu-depth2').innerHTML = `
         <button onclick="renderLocation('hotel', this)">호텔/공항</button>
         <button onclick="renderLocation('tour', this)">관광지</button>
-        <button onclick="renderLocation('restaurant', this)">식당</button>`;
+        <button onclick="renderLocation('restaurant', this)">식당</button>
+    `;
     renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
 function renderLocation(cat, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+
     const list = window[cat + 'Data'];
-    if(!list) return;
+    if (!list) return;
+
     document.getElementById('menu-depth3').innerHTML = list.map((i, idx) => `
-        <button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>`).join('');
+        <button onclick="renderLocCard('${cat}', ${idx}, this)">${i.kr}</button>
+    `).join('');
+    
     renderLocCard(cat, 0, document.querySelector('#menu-depth3 button'));
 }
 
 function renderLocCard(cat, idx, btn) {
     const list = window[cat + 'Data'];
     if (!list || !list[idx]) return;
+
     document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+
     const item = list[idx];
     let krPart = "", cnPart = "", lineTags = "";
+
+    // 지하철 정보 파싱
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -77,20 +99,24 @@ function renderLocCard(cat, idx, btn) {
         krPart = stationMatch ? stationMatch[1].trim() : mainSub;
         if (!krPart.endsWith('역')) krPart += '역';
         cnPart = stationMatch ? stationMatch[2].trim() : "";
+        
         const lines = item.sub.match(/\d+/g) || [];
         lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
+
+    // 운영시간 및 설명 HTML 구성
+    let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
     let descHtml = "";
     if (item.desc) {
         const lines = item.desc.split('\n');
         const firstLine = lines[0];
         const bodyHtml = lines.slice(1).join('\n').trim().split('\n').map(p => {
-            if (!p.trim()) return '';
-            return `<p class="desc-para">${p.trim()}</p>`; 
+            return p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '';
         }).join('');
         descHtml = `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
     }
+
     document.getElementById('app').innerHTML = `
         <div class="card">
             <div onclick="copy('${item.cn}')">
@@ -104,33 +130,43 @@ function renderLocCard(cat, idx, btn) {
                 <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
+            ${hoursHtml}
             ${descHtml}
-        </div>`;
+        </div>
+    `;
     window.scrollTo(0, 0);
 }
 
-// --- [2. 메뉴 탭] ---
+// ==========================================
+// [탭 2: 메뉴판 관련]
+// ==========================================
+
 function showMenuTab(btn) {
     setAppLayout('all');
     setActiveFooter(btn);
+
     const resKeys = Object.keys(window.menuData);
     document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
-        <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>`).join('');
+        <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>
+    `).join('');
     loadMenu(resKeys[0], document.querySelectorAll('#menu-depth2 button')[0]);
 }
 
 function loadMenu(res, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+
     const cats = Object.keys(window.menuData[res]);
     document.getElementById('menu-depth3').innerHTML = cats.map(c => `
-        <button onclick="renderMenu('${res}', '${c}', this)">${c}</button>`).join('');
+        <button onclick="renderMenu('${res}', '${c}', this)">${c}</button>
+    `).join('');
     renderMenu(res, cats[0], document.querySelector('#menu-depth3 button'));
 }
 
 function renderMenu(res, cat, btn) {
     document.querySelectorAll('#menu-depth3 button').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+
     const items = window.menuData[res][cat];
     document.getElementById('app').innerHTML = items.map(i => `
         <div class="menu-card" onclick="copy('${i.cn}')">
@@ -140,13 +176,14 @@ function renderMenu(res, cat, btn) {
                 <div class="py-read-row">${i.py} / ${i.kr_read}</div>
             </div>
             <div class="price-circle-fill">¥${i.price}</div>
-        </div>`).join('');
+        </div>
+    `).join('');
     window.scrollTo(0, 0);
 }
 
-// --- [3. 계산기 탭] ---
-let calcExpr = "0"; 
-let currentRate = localStorage.getItem('exchangeRate') || 223.0;
+// ==========================================
+// [탭 3: 계산기 관련]
+// ==========================================
 
 function showCalcTab(btn) {
     setAppLayout('none');
@@ -184,10 +221,16 @@ function renderCalculator() {
 }
 
 function pressCalc(key) {
-    if (key === 'AC') calcExpr = "0";
-    else if (key === 'DEL') calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
-    else if (key === '=') {
-        try { calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/'))); } catch { calcExpr = "Error"; }
+    if (key === 'AC') {
+        calcExpr = "0";
+    } else if (key === 'DEL') {
+        calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
+    } else if (key === '=') {
+        try {
+            calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')));
+        } catch {
+            calcExpr = "Error";
+        }
     } else {
         if (calcExpr === "0" && key !== '.') calcExpr = key;
         else calcExpr += key;
@@ -199,8 +242,14 @@ function updateCalcDisplay() {
     const cnyElement = document.getElementById('cny-val');
     const krwElement = document.getElementById('krw-val');
     if (!cnyElement || !krwElement) return;
+
     let resultNum = 0;
-    try { resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0; } catch { resultNum = 0; }
+    try {
+        resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0;
+    } catch {
+        resultNum = 0;
+    }
+
     cnyElement.innerText = calcExpr + " CNY";
     krwElement.innerHTML = Math.round(resultNum * currentRate).toLocaleString() + "<span>원</span>";
 }
@@ -212,45 +261,71 @@ function updateRate(val) {
     updateCalcDisplay();
 }
 
-// --- [4. 회화 탭] ---
+// ==========================================
+// [탭 4: 필수 회화 관련]
+// ==========================================
+
 function showTalkTab(btn) {
-    setAppLayout('mid'); 
+    setAppLayout('mid');
     setActiveFooter(btn);
+
     const categories = Object.keys(window.talkData);
     document.getElementById('menu-depth2').innerHTML = categories.map(cat => `
-        <button onclick="renderTalkCategory('${cat}', this)">${cat}</button>`).join('');
+        <button onclick="renderTalkCategory('${cat}', this)">${cat}</button>
+    `).join('');
+    
     renderTalkCategory(categories[0], document.querySelector('#menu-depth2 button'));
 }
 
 function renderTalkCategory(cat, btn) {
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+
     const items = window.talkData[cat] || [];
-    document.getElementById('app').innerHTML = `<div style="padding:10px 5px;">` + items.map(t => `
-        <div class="talk-item" onclick="copy('${t.cn}')">
-            <div style="flex:1">
-                <div class="talk-cn">${t.cn}</div>
-                <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
-                <div class="talk-kr-desc">${t.kr}</div>
-            </div>
-            <div class="talk-copy-tag">복사</div>
-        </div>`).join('') + `</div>`;
+    document.getElementById('app').innerHTML = `
+        <div style="padding:10px 5px;">
+            ${items.map(t => `
+                <div class="talk-item" onclick="copy('${t.cn}')">
+                    <div style="flex:1">
+                        <div class="talk-cn">${t.cn}</div>
+                        <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
+                        <div class="talk-kr-desc">${t.kr}</div>
+                    </div>
+                    <div class="talk-copy-tag">복사</div>
+                </div>
+            `).join('')}
+        </div>`;
 }
 
-// --- [5. 정보 탭] (6가지 항목 + 하이픈 + 복사버튼) ---
+// ==========================================
+// [탭 5: 정보 (멤버/일정) 관련]
+// ==========================================
+
 function showInfoTab(btn) {
-    setAppLayout('none');
+    setAppLayout('mid');
     setActiveFooter(btn);
-    
-    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:20px; margin-bottom:20px;">👥 일행 정보 (4명)</div>`;
+
+    document.getElementById('menu-depth2').innerHTML = `
+        <button onclick="renderInfoMembers(this)">일행 정보</button>
+        <button onclick="renderInfoSchedule(this)">여행 일정</button>
+    `;
+    renderInfoMembers(document.querySelector('#menu-depth2 button'));
+}
+
+// 일행 정보 화면
+function renderInfoMembers(btn) {
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:18px; margin-bottom:15px;">👥 일행 정보 (4명)</div>`;
     
     for (let i = 1; i <= 4; i++) {
-        const n = localStorage.getItem(`mem-n-${i}`) || "";   // 이름
-        const sn = localStorage.getItem(`mem-sn-${i}`) || ""; // 영문 성
-        const gn = localStorage.getItem(`mem-gn-${i}`) || ""; // 영문 이름
-        const p = localStorage.getItem(`mem-p-${i}`) || "";   // 여권번호
-        const b = localStorage.getItem(`mem-b-${i}`) || "";   // 생년월일
-        const e = localStorage.getItem(`mem-e-${i}`) || "";   // 만료일
+        const n = localStorage.getItem(`mem-n-${i}`) || "";
+        const sn = localStorage.getItem(`mem-sn-${i}`) || "";
+        const gn = localStorage.getItem(`mem-gn-${i}`) || "";
+        const p = localStorage.getItem(`mem-p-${i}`) || "";
+        const b = localStorage.getItem(`mem-b-${i}`) || "";
+        const e = localStorage.getItem(`mem-e-${i}`) || "";
 
         html += `
             <div class="member-card">
@@ -263,31 +338,57 @@ function showInfoTab(btn) {
                 ${renderInfoRow(i, 'e', '여권만료', e, '2030-01-01', true)}
             </div>`;
     }
-    document.getElementById('app').innerHTML = html + `<p style="font-size:11px; color:#999; text-align:center;">날짜는 숫자 8자리를 치면 자동으로 하이픈이 생깁니다.</p></div>`;
+    document.getElementById('app').innerHTML = html + `</div>`;
 }
 
-function renderInfoRow(idx, key, label, value, placeholder, isDate = false) {
+// 여행 일정 화면
+function renderInfoSchedule(btn) {
+    document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const sch = window.scheduleData || {};
+    const days = Object.keys(sch);
+    let html = `<div style="padding:10px 5px;">`;
+
+    days.forEach(day => {
+        html += `<div class="talk-category-title">${day}</div>`;
+        html += sch[day].map(s => `
+            <div class="schedule-item">
+                <div class="sch-time">${s.time}</div>
+                <div class="sch-info">
+                    <div class="sch-title">${s.title}</div>
+                    <div class="sch-memo">${s.memo}</div>
+                </div>
+            </div>`).join('');
+    });
+    document.getElementById('app').innerHTML = html + `</div>`;
+}
+
+// 보조: 정보 입력 행 구성
+function renderInfoRow(idx, key, label, val, ph, isDate = false) {
     const id = `${key}-${idx}`;
     const onInput = isDate ? `oninput="formatDateInput(this)"` : "";
     return `
         <div class="info-row">
             <label>${label}</label>
-            <input type="text" id="${id}" value="${value}" ${onInput} onchange="saveMem(${idx})" placeholder="${placeholder}">
+            <input type="text" id="${id}" value="${val}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
             <button class="btn-copy-small" onclick="copy(document.getElementById('${id}').value)">복사</button>
         </div>`;
 }
 
+// 보조: 날짜 하이픈 자동 생성
 function formatDateInput(obj) {
-    let val = obj.value.replace(/\D/g, "");
-    if (val.length > 8) val = val.substring(0, 8);
-    if (val.length > 4 && val.length <= 6) {
-        val = val.substring(0, 4) + "-" + val.substring(4);
-    } else if (val.length > 6) {
-        val = val.substring(0, 4) + "-" + val.substring(4, 6) + "-" + val.substring(6);
+    let v = obj.value.replace(/\D/g, "");
+    if (v.length > 8) v = v.substring(0, 8);
+    if (v.length > 4 && v.length <= 6) {
+        v = v.substring(0, 4) + "-" + v.substring(4);
+    } else if (v.length > 6) {
+        v = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6);
     }
-    obj.value = val;
+    obj.value = v;
 }
 
+// 보조: 멤버 데이터 저장
 function saveMem(i) {
     localStorage.setItem(`mem-n-${i}`, document.getElementById(`n-${i}`).value);
     localStorage.setItem(`mem-sn-${i}`, document.getElementById(`sn-${i}`).value);
