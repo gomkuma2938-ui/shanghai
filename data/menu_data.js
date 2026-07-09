@@ -1,47 +1,55 @@
 window.menuData = {
     jiajia: {
-        "면류": [
-            { cn: "雪菜肉丝面", py: "xuěcài ròusī miàn", kr_read: "슈에차이 로우스미엔", kr: "갓절임 돼지고기 면 (국물/비빔)", price: "18" },
-            { cn: "红烧咸蛋黄狮子头面", py: "hóngshāo xiándànhuáng shīzitóu miàn", kr_read: "홍샤오 시엔단후앙 스즈터우미엔", kr: "홍소 달걀노른자 사자두 면", price: "24" },
-            { cn: "葱油拌面", py: "cōngyóu bànmiàn", kr_read: "총요우 빤미엔", kr: "★파기름 비빔면", price: "12" },
-            { cn: "红汤虾籽面", py: "hóngtāng xiāzǐ miàn", kr_read: "홍탕 시아즈미엔", kr: "홍탕 새우알 면", price: "14" },
-            { cn: "香辣肉糜面", py: "xiānglà ròumí miàn", kr_read: "샹라 로우미미엔", kr: "매콤 다진 고기 면 (국물/비빔)", price: "20" },
-            { cn: "麻酱拌面", py: "májiàng bànmiàn", kr_read: "마지앙 빤미엔", kr: "땅콩소스 비빔면", price: "15" },
-            { cn: "红烧牛肉面", py: "hóngshāo niúròu miàn", kr_read: "홍샤오 뉴로우미엔", kr: "홍소 소고기 면", price: "32" },
-            { cn: "三菇面筋面", py: "sāngū miànjīn miàn", kr_read: "싼구 미엔진미엔", kr: "버섯 밀기울 면 (국물/비빔)", price: "22" },
-            { cn: "黄金蟹粉拌面", py: "huángjīn xièfěn bànmiàn", kr_read: "황진 시에펀 빤미엔", kr: "황금 게살 비빔면 (국 포함)", price: "89" }
-        ],
-        "요리": [
-            { cn: "红烧咸蛋黄狮子头", py: "hóngshāo xiándànhuáng shīzitóu", kr_read: "홍샤오 시엔단후앙 스즈터우", kr: "중국식 오리알 미트볼 간장 조림", price: "14" },
-            { cn: "红烧大排", py: "hóngshāo dàpái", kr_read: "홍샤오 따파이", kr: "돼지갈비 간장 조림", price: "15" },
-            { cn: "雪菜肉丝", py: "xuěcài ròusī", kr_read: "슈에차이 로우스", kr: "갓절임 돼지고기", price: "8" },
-            { cn: "香辣肉糜", py: "xiānglà ròumí", kr_read: "샹라 로우미", kr: "매콤 다진 고기", price: "10" },
-            { cn: "三菇面筋", py: "sāngū miànjīn", kr_read: "싼구 미엔진", kr: "버섯 밀떡", price: "12" },
-            { cn: "本帮烤麸", py: "běnbāng kǎofū", kr_read: "뻔빵 카오푸", kr: "상하이식 밀떡 조림", price: "12" },
-            { cn: "酱香卤蛋", py: "jiàngxiāng lǔdàn", kr_read: "지앙샹 루단", kr: "간장 조림 달걀", price: "3" },
-            { cn: "嫩滑杏鲍菇", py: "nènhuá xìngbàogū", kr_read: "런후아 싱바오구", kr: "새송이버섯 요리", price: "12" },
-            { cn: "豉油生菜", py: "chǐyóu shēngcài", kr_read: "치요우 셩차이", kr: "간장 소스 상추", price: "12" }
-        ],
-        "탕류": [
-            { cn: "满馆单档汤", py: "mǎnguǎn dāndàng tāng", kr_read: "만구안 딴땅탕", kr: "단당 완탕", price: "13" },
-            { cn: "紫菜皮蛋汤", py: "zǐcài pídàn tāng", kr_read: "쯔차이 피단탕", kr: "김 피단 국", price: "8" },
-            { cn: "弹牙贡丸汤", py: "dányá gòngwán tāng", kr_read: "딴야 공완탕", kr: "쫀득한 완자탕 (4알)", price: "12" },
-            { cn: "海墨鱼丸汤", py: "hǎi mòyúwán tāng", kr_read: "하이모위완탕", kr: "오징어 완자탕 (4알)", price: "12" },
-            { cn: "鸡鸭血汤", py: "jīyā xuètāng", kr_read: "지야쉐탕", kr: "닭·오리 선지탕", price: "9" }
-        ],
         "소룡포": [
-            { cn: "经典鲜肉汤包", py: "jīngdiǎn xiānròu tāngbāo", kr_read: "징디앤 시엔로우 탕바오", kr: "기본 돼지고기 소룡포 (12개)", price: "23" },
-            { cn: "香菇鲜肉汤包", py: "xiānggū xiānròu tāngbāo", kr_read: "샹구 시엔로우 탕바오", kr: "버섯 돼지고기 소룡포 (12개)", price: "28" },
-            { cn: "荠菜鲜肉汤包", py: "jìcài xiānròu tāngbāo", kr_read: "치차이 시엔로우 탕바오", kr: "냉이 돼지고기 소룡포 (12개)", price: "25" },
-            { cn: "虾仁鲜肉汤包", py: "xiārén xiānròu tāngbāo", kr_read: "시아런 시엔로우 탕바오", kr: "새우 돼지고기 소룡포 (12개)", price: "32" },
-            { cn: "丝瓜鲜肉汤包", py: "sīguā xiānròu tāngbāo", kr_read: "쓰구아 시엔로우 탕바오", kr: "수세미 돼지고기 소룡포 (12개)", price: "28" },
-            { cn: "丝瓜虾仁汤包", py: "sīguā xiārén tāngbāo", kr_read: "쓰구아 시아런 탕바오", kr: "수세미 새우 소룡포 (12개)", price: "38" },
-            { cn: "蛋黄鲜肉汤包", py: "dànhuáng xiānròu tāngbāo", kr_read: "딴황 시엔로우 탕바오", kr: "계란 노른자 돼지고기 소룡포 (12개)", price: "32" },
-            { cn: "黑松露汤包", py: "hēisōnglù tāngbāo", kr_read: "헤이송루 탕바오", kr: "블랙 트러플 소룡포 (6개)", price: "48" },
-            { cn: "蟹粉鲜肉汤包", py: "xièfěn xiānròu tāngbāo", kr_read: "시에펀 시엔로우 탕바오", kr: "게살 돼지고기 소룡포 (12개)", price: "38" },
-            { cn: "纯蟹粉汤包", py: "chún xièfěn tāngbāo", kr_read: "춘시에펀 탕바오", kr: "순수 게살 소룡포 (6개)", price: "55" },
-            { cn: "全家福汤包", py: "quánjiāfú tāngbāo", kr_read: "취앤지아푸 탕바오", kr: "모둠 소룡포 (12개)", price: "32" },
-            { cn: "超级全家福汤包", py: "chāojí quánjiāfú tāngbāo", kr_read: "차오지 취앤지아푸 탕바오", kr: "슈퍼 모둠 소룡포 (12개)", price: "62" }
+            { cn: "鲜肉汤包", py: "xiānròu tāngbāo", kr_read: "시엔로우 탕빠오", kr: "고기 소룡포", price: "23" },
+            { cn: "香菇鲜肉汤包", py: "xiānggū xiānròu tāngbāo", kr_read: "시앙구 시엔로우 탕빠오", kr: "표고버섯 고기 소룡포", price: "28" },
+            { cn: "丝瓜鲜肉汤包", py: "sīguā xiānròu tāngbāo", kr_read: "쓰구아 시엔로우 탕빠오", kr: "오이 돼지고기 소룡포", price: "28" },
+            { cn: "全家福汤包", py: "quánjiāfú tāngbāo", kr_read: "쵠지아푸 탕빠오", kr: "모둠 소룡포", price: "32" },
+            { cn: "虾仁鲜肉汤包(12只装)", py: "xiārén xiānròu tāngbāo", kr_read: "시아런 시엔로우 탕빠오", kr: "새우 고기 소룡포 (12개입)", price: "32" },
+            { cn: "丝瓜虾仁鲜肉汤包", py: "sīguā xiārén xiānròu tāngbāo", kr_read: "쓰구아 시아런 시엔로우 탕빠오", kr: "오이 새우 돼지고기 소룡포", price: "38" },
+            { cn: "蟹粉鲜肉汤包", py: "xièfěn xiānròu tāngbāo", kr_read: "시에펀 시엔로우 탕빠오", kr: "게살 고기 소룡포", price: "38" },
+            { cn: "黑松露鲜肉汤包(六只)", py: "hēisōnglù xiānròu tāngbāo (liù zhī)", kr_read: "헤이송루 시엔로우 탕빠오", kr: "트러플 고기 소룡포 (6개입)", price: "48" },
+            { cn: "超级全家福汤包", py: "chāojí quánjiāfú tāngbāo", kr_read: "차오지 쵠지아푸 탕빠오", kr: "슈퍼 모둠 소룡포", price: "62" },
+            { cn: "纯蟹粉汤包(六只)", py: "chún xièfěn tāngbāo (liù zhī)", kr_read: "춘 시에펀 탕빠오", kr: "순 게살 소룡포 (6개입)", price: "55" },
+            { cn: "纯蟹粉汤包", py: "chún xièfěn tāngbāo", kr_read: "춘 시에펀 탕빠오", kr: "순 게살 소룡포 (대)", price: "108" },
+            { cn: "蛋黄鲜肉汤包", py: "dànhuáng xiānròu tāngbāo", kr_read: "딴황 시엔로우 탕빠오", kr: "노른자 고기 소룡포", price: "32" }
+        ],
+        "면요리": [
+            { cn: "葱油拌面", py: "cōngyóu bànmiàn", kr_read: "총요우 빤미엔", kr: "파기름 비빔면", price: "12~" },
+            { cn: "黄金蟹粉拌面", py: "huángjīn xièfěn bànmiàn", kr_read: "황진 시에펀 빤미엔", kr: "황금 게살 비빔면", price: "89~" },
+            { cn: "香辣肉糜汤面", py: "xiānglà ròumí tāngmiàn", kr_read: "시앙라 로우미 탕미엔", kr: "매콤 다진고기 국수", price: "20~" },
+            { cn: "香辣肉糜拌面", py: "xiānglà ròumí bànmiàn", kr_read: "시앙라 로우미 빤미엔", kr: "매콤 다진고기 비빔면", price: "20~" },
+            { cn: "麻香酱拌面", py: "máxiāngjiàng bànmiàn", kr_read: "마시앙지앙 빤미엔", kr: "마장 비빔면", price: "15" },
+            { cn: "青咸菜肉丝汤면", py: "qīng xiáncài ròusī tāngmiàn", kr_read: "칭 시엔차이 로우쓰 탕미엔", kr: "청채 채소 돼지고기 국수", price: "18~" }
+        ],
+        "만두국": [
+            { cn: "鲜肉小馄饨", py: "xiānròu xiǎohúntun", kr_read: "시엔로우 샤오훈둔", kr: "고기 작은 만두국", price: "13~" },
+            { cn: "虾仁鲜肉小馄饨", py: "xiārén xiānròu xiǎohúntun", kr_read: "시아런 시엔로우 샤오훈둔", kr: "새우 고기 작은 만두국", price: "18~" },
+            { cn: "香芹鲜肉大馄饨", py: "xiāngqín xiānròu dàhúntun", kr_read: "시앙친 시엔로우 따훈둔", kr: "셀러리 고기 큰 만두국", price: "18~" },
+            { cn: "皮蛋鲜肉大馄饨", py: "pídàn xiānròu dàhúntun", kr_read: "피딴 시엔로우 따훈둔", kr: "피단 고기 큰 만두국", price: "23~" },
+            { cn: "荠菜鲜肉小馄饨", py: "jìcài xiānròu xiǎohúntun", kr_read: "지차이 시엔로우 샤오훈둔", kr: "냉이 고기 작은 만두국", price: "13~" },
+            { cn: "荠菜鲜肉大馄饨", py: "jìcài xiānròu dàhúntun", kr_read: "지차이 시엔로우 따훈둔", kr: "냉이 고기 큰 만두국", price: "18~" },
+            { cn: "全家福大馄饨", py: "quánjiāfú dàhúntun", kr_read: "쵠지아푸 따훈둔", kr: "모둠 큰 만두국", price: "23~" }
+        ],
+        "국물요리": [
+            { cn: "紫菜蛋皮汤", py: "zǐcài dàn pí tāng", kr_read: "즈차이 딴피탕", kr: "김 계란국", price: "8~" },
+            { cn: "鸡鸭血汤", py: "jī yā xuè tāng", kr_read: "지야 쉬에탕", kr: "닭오리 선지국", price: "9~" },
+            { cn: "海墨鱼丸汤", py: "hǎi mòyúwántāng", kr_read: "하이 모위완탕", kr: "오징어 완자탕", price: "12" },
+            { cn: "弹牙贡丸汤", py: "tányá gòngwántāng", kr_read: "탄야 꽁완탕", kr: "탱글 완자탕", price: "12" }
+        ],
+        "반찬": [
+            { cn: "豉油生菜", py: "chǐyóu shēngcài", kr_read: "치요우 셩차이", kr: "간장 소스 상추 데침", price: "12" },
+            { cn: "香辣肉糜", py: "xiānglà ròumí", kr_read: "시앙라 로우미", kr: "매콤 다진 고기 볶음", price: "10" },
+            { cn: "青咸菜肉丝", py: "qīng xiáncài ròusī", kr_read: "칭 시엔차이 로우쓰", kr: "청채 채소 돼지고기 볶음", price: "8" },
+            { cn: "香酥炸鸡柳", py: "xiāngsū zhàjīliǔ", kr_read: "시앙쑤 짜지리우", kr: "향긋한 닭안심 튀김", price: "13" },
+            { cn: "酱香卤蛋", py: "jiàngxiāng lǔdàn", kr_read: "지앙시앙 루딴", kr: "간장 조림 계란", price: "3" }
+        ],
+        "음료": [
+            { cn: "可乐", py: "kělè", kr_read: "커러", kr: "콜라", price: "5" },
+            { cn: "雪菲力", py: "xuěfēilì", kr_read: "슈페이리", kr: "딸기음료", price: "4" },
+            { cn: "纯净水", py: "chúnjìngshuǐ", kr_read: "춘징슈이", kr: "순정수", price: "3" },
+            { cn: "加多宝", py: "jiāduōbǎo", kr_read: "지아뚜어바오", kr: "가다보", price: "6" },
+            { cn: "雪碧", py: "xuěbì", kr_read: "쉬에비", kr: "스프라이트", price: "5" }
         ]
     },
     dahuchun: {
