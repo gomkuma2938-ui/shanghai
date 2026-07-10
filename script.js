@@ -6,7 +6,7 @@
 // 1. 기본 설정 및 상수
 const resName = {
     jiajia: '지아지아탕바오',
-    dahuchun: '다후춘',
+    xiaoyang: '소양생전',
     haidilao: '하이디라오',
     jiangbian: '강변성외'
 };
