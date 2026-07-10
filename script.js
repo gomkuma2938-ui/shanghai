@@ -18,8 +18,15 @@ let currentRate = localStorage.getItem('exchangeRate') || 223.0; // 환율
 function copy(text) {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
-        alert("복사 완료: " + text);
+        showToast("복사 완료: " + text);
     });
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
 }
 
 // 푸터 버튼 활성화 표시
