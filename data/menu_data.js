@@ -20,7 +20,7 @@ window.menuData = {
             { cn: "香辣肉糜汤面", py: "xiānglà ròumí tāngmiàn", kr_read: "시앙라 로우미 탕미엔", kr: "매콤 다진고기 국수", price: "20~" },
             { cn: "香辣肉糜拌面", py: "xiānglà ròumí bànmiàn", kr_read: "시앙라 로우미 빤미엔", kr: "매콤 다진고기 비빔면", price: "20~" },
             { cn: "麻香酱拌面", py: "máxiāngjiàng bànmiàn", kr_read: "마시앙지앙 빤미엔", kr: "마장 비빔면", price: "15" },
-            { cn: "青咸菜肉丝汤면", py: "qīng xiáncài ròusī tāngmiàn", kr_read: "칭 시엔차이 로우쓰 탕미엔", kr: "청채 채소 돼지고기 국수", price: "18~" }
+            { cn: "青咸菜肉丝汤面", py: "qīng xiáncài ròusī tāngmiàn", kr_read: "칭 시엔차이 로우쓰 탕미엔", kr: "청채 채소 돼지고기 국수", price: "18~" }
         ],
         "만두국": [
             { cn: "鲜肉小馄饨", py: "xiānròu xiǎohúntun", kr_read: "시엔로우 샤오훈둔", kr: "고기 작은 만두국", price: "13~" },
@@ -136,9 +136,9 @@ haidilao: {
             { cn: "V形蟹味柳", py: "V xíng xièwèi liǔ", kr_read: "V싱 시에웨이 리우", kr: "V자 게맛살", price: "16" }
         ],
         "기타 육류": [
-            { cn: "捞派鴨腸", py: "lāopài yācháng", kr_read: "라오파이 야창", kr: "라오파이 오리 창자", price: "27" },
+            { cn: "捞派鸭肠", py: "lāopài yācháng", kr_read: "라오파이 야창", kr: "라오파이 오리 창자", price: "27" },
             { cn: "捞派猪黄喉", py: "lāopài zhū huánghóu", kr_read: "쭈 후앙호우", kr: "라오파이 돼지 혈관", price: "34" },
-            { cn: "층층설랑저오화", py: "céngcéng xuělàng zhū wǔhuā", kr_read: "청청슈에랑 쭈 우화", kr: "겹겹이 눈 같은 돼지 삼겹살", price: "25" },
+            { cn: "层层雪浪猪五花", py: "céngcéng xuělàng zhū wǔhuā", kr_read: "청청슈에랑 쭈 우화", kr: "겹겹이 눈 같은 돼지 삼겹살", price: "25" },
             { cn: "我的小郡肝", py: "wǒ de xiǎo jùngān", kr_read: "워 더 샤오 쥔간", kr: "나의 닭모래집 꼬치", price: "24" },
             { cn: "捞派毛肚", py: "lāopài máodù", kr_read: "라오파이 마오두", kr: "라오파이 천엽", price: "44" },
             { cn: "捞派脆脆毛肚", py: "lāopài cuìcuì máodù", kr_read: "라오파이 췌이췌이 마오두", kr: "라오파이 아삭한 천엽", price: "44" },
@@ -231,7 +231,7 @@ haidilao: {
             { cn: "麻辣味", py: "málà wèi", kr_read: "마라 웨이", kr: "마라맛 (매운맛 선호)", price: "0" },
             { cn: "蒜香味", py: "suànxiāng wèi", kr_read: "쑤안샹 웨이", kr: "마늘맛 (한국인 베스트)", price: "0" },
             { cn: "酱香味", py: "jiàngxiāng wèi", kr_read: "지앙샹 웨이", kr: "간장 조림맛 (안 매움)", price: "0" },
-            { cn: "怪味", py: "guàiwèi", kr_read: "guàiwèi", kr: "괴식맛 (매콤+새콤+달콤 복합적 맛)", price: "0" }
+            { cn: "怪味", py: "guàiwèi", kr_read: "꽈이웨이", kr: "매콤+새콤+달콤 복합적 맛", price: "0" }
         ],
         "추가 사리": [
             { cn: "辅菜全家福", py: "fǔcài quánjiāfú", kr_read: "푸차이 취앤지아푸", kr: "모둠 사리 세트", price: "38" },
