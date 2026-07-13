@@ -5,6 +5,7 @@
 
 // 1. 기본 설정 및 상수
 const resName = {
+    mcdonald:'맥도날드',
     jiajia: '지아지아탕바오',
     xiaoyang: '소양생전',
     haidilao: '하이디라오',
