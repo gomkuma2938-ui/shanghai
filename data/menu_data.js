@@ -1,5 +1,4 @@
 window.menuData = {
-    {
     jiajia: {
         "소룡포": [
             { cn: "鲜肉汤包", py: "xiānròu tāngbāo", kr_read: "시엔로우 탕빠오", kr: "고기 소룡포", price: "23" },
