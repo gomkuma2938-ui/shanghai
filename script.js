@@ -6,9 +6,10 @@
 // 1. 기본 설정 및 상수
 const resName = {
     jiajia: '지아지아탕바오',
-    xiaoyang: '소양생전',
+    waipojia:'와이포지아',
     haidilao: '하이디라오',
-    jiangbian: '강변성외'
+    jiangbian: '강변성외',
+    xiaoyang: '소양생전'
 };
 
 let calcExpr = "0"; // 계산기 입력값
