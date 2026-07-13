@@ -223,8 +223,8 @@ haidilao: {
     },
     jiangbian: {
         "생선 선택": [
-            { cn: "湄公鱼", py: "méigōng yú", kr_read: "메이꽁 위", kr: "메콩강 메기 (살이 부드럽고 가시 적음)", price: "148~" },
-            { cn: "清江鱼", py: "qīngjiāng yú", kr_read: "칭지앙 위", kr: "칭장어 (가장 인기 많음)", price: "158~" },
+            { cn: "湄公鱼", py: "méigōng yú", kr_read: "메이꽁 위", kr: "팡가시우스(민물 메기)", price: "148~" },
+            { cn: "清江鱼", py: "qīngjiāng yú", kr_read: "칭지앙 위", kr: "칭강 민물고기", price: "158~" },
             { cn: "海鲈鱼", py: "hǎilúyú", kr_read: "하이루위", kr: "바다 농어", price: "168~" }
         ],
         "맛 선택(소스)": [
