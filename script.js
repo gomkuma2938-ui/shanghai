@@ -353,24 +353,27 @@ function toggleTalkHighlight(el) {
 // ==========================================
 
 function showInfoTab(btn) {
-    // 일단 2뎁스만 보이는 mid 모드로 시작
-    setAppLayout('mid');
+    // 3뎁스(날짜 바)가 보여야 하므로 'all' 모드로 시작
+    setAppLayout('all'); 
     setActiveFooter(btn);
 
     document.getElementById('menu-depth2').innerHTML = `
-        <button onclick="renderInfoMembers(this)">일행 정보</button>
         <button onclick="renderInfoScheduleTab(this)">여행 일정</button>
+        <button onclick="renderInfoMembers(this)">일행 정보</button>
     `;
     
-    // 기본값으로 일행 정보 표시
-    renderInfoMembers(document.querySelector('#menu-depth2 button'));
+    // 여행 일정이 기본으로 로드됨
+    renderInfoScheduleTab(document.querySelector('#menu-depth2 button'));
 }
 
 // 5-1. 일행 정보 화면 (2뎁스 유지)
 function renderInfoMembers(btn) {
-    setAppLayout('mid'); // 3뎁스 숨김
+    // 탭 이동 시 3뎁스(날짜 바)를 확실히 숨김
+    setAppLayout('mid'); 
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    
+    // 안전한 클래스 추가
+    if (btn) btn.classList.add('active');
 
     let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:18px; margin-bottom:15px;">👥 일행 정보 (4명)</div>`;
     
@@ -398,19 +401,19 @@ function renderInfoMembers(btn) {
 
 // 5-2. 여행 일정 탭 설정 (3뎁스 활성화)
 function renderInfoScheduleTab(btn) {
-    setAppLayout('all'); // 3뎁스(depth3) 바 보이기 모드로 전환
+    setAppLayout('all');
     document.querySelectorAll('#menu-depth2 button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    
+    // 안전한 클래스 추가
+    if (btn) btn.classList.add('active');
 
     const sch = window.scheduleData || {};
     const days = Object.keys(sch);
 
-    // 3뎁스 바에 1일차, 2일차... 버튼 생성
     document.getElementById('menu-depth3').innerHTML = days.map((day, idx) => `
         <button onclick="renderDaySchedule('${day}', this)">${day}</button>
     `).join('');
 
-    // 첫 번째 날짜 일정 자동 로드
     renderDaySchedule(days[0], document.querySelector('#menu-depth3 button'));
 }
 
