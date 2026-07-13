@@ -1,6 +1,6 @@
 window.menuData = {
     {
-  "맥도날드": {
+  "mcdonald": {
     "버거": [
       { "cn": "原味板烧鸡腿堡", "py": "yuánwèi bǎnshāo jītuǐbǎo", "kr_read": "위엔웨이 빤샤오 지투이빠오", "kr": "오리지널 그릴 치킨 버거", "price": "22" },
       { "cn": "巨无霸", "py": "jùwúbà", "kr_read": "쥐우바", "kr": "빅맥", "price": "" },
