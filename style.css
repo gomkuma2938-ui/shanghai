@@ -215,6 +215,15 @@ body.layout-none #menu-depth3 { display: none !important; }
 .sch-title { font-size: 16px; font-weight: 800; color: #333; margin-bottom: 4px; }
 .sch-memo { font-size: 13px; color: #888; line-height: 1.4; }
 
+/* 선택방지 속성 */
+.card, .menu-card, .talk-item {
+    -webkit-user-select: none; /* Safari[cite: 4] */
+    -moz-user-select: none;    /* Firefox[cite: 4] */
+    -ms-user-select: none;     /* IE/Edge[cite: 4] */
+    user-select: none;         /* 표준 속성[cite: 4] */
+    cursor: pointer;
+}
+
 /* 토스트 알림 */
 .toast {
     position: fixed;
