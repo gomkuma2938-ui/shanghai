@@ -15,8 +15,19 @@ let calcExpr = "0"; // 계산기 입력값
 let currentRate = localStorage.getItem('exchangeRate') || 223.0; // 환율
 
 // 2. 공통 유틸리티 함수
-function copy(text) {
+function copy(text, event) {
     if (!text) return;
+
+    // 브라우저의 기본 텍스트 선택 동작 방지
+    if (event) {
+        event.preventDefault();
+    }
+
+    // 기존 선택된 영역 강제 해제[cite: 3]
+    if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+
     navigator.clipboard.writeText(text).then(() => {
         showToast("복사 완료: " + text);
     });
@@ -143,7 +154,7 @@ function renderLocCard(cat, idx, btn) {
 
     document.getElementById('app').innerHTML = `
         <div class="card">
-            <div onclick="copy('${item.cn}')">
+            <div onclick="copy('${item.cn}', event)">
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
@@ -193,7 +204,7 @@ function renderMenu(res, cat, btn) {
 
     const items = window.menuData[res][cat];
     document.getElementById('app').innerHTML = items.map(i => `
-        <div class="menu-card" onclick="copy('${i.cn}')">
+        <div class="menu-card" onclick="copy('${i.cn}', event)">
             <div class="text-area">
                 <div class="cn-big-menu">${i.cn}</div>
                 <div class="kr-med-menu">${i.kr}</div>
