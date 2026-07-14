@@ -3,15 +3,6 @@
  * 모든 기능이 통합된 가독성 중심 버전입니다.
  */
 
-// 1. 기본 설정 및 상수
-const resName = {
-    jiajia: '지아지아탕바오',
-    waipojia:'와이포지아',
-    haidilao: '하이디라오',
-    jiangbian: '강변성외',
-    xiaoyang: '소양생전'
-};
-
 let calcExpr = "0"; // 계산기 입력값
 let currentRate = localStorage.getItem('exchangeRate') || 223.0; // 환율
 
