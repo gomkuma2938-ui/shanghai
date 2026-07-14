@@ -4,7 +4,9 @@ const ASSETS = [
   './index.html',
   './style.css',
   './script.js',
-  './data/location.js',
+  './data/hotel.js',
+  './data/tour.js',
+  './data/restaurant.js',
   './data/menu_data.js',
   './data/talk.js',
   './data/schedule.js'
