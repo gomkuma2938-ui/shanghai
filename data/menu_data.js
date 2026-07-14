@@ -1,3 +1,11 @@
+window.resNameData = {
+    jiajia: '지아지아탕바오',
+    waipojia: '와이포지아',
+    haidilao: '하이디라오',
+    jiangbian: '강변성외',
+    xiaoyang: '소양생전'
+};
+
 window.menuData = {
     jiajia: {
         "소룡포": [
