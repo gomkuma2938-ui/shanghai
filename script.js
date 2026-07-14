@@ -181,8 +181,9 @@ function showMenuTab(btn) {
     setActiveFooter(btn);
 
     const resKeys = Object.keys(window.menuData);
+    const names = window.resNameData || {};
     document.getElementById('menu-depth2').innerHTML = resKeys.map(res => `
-        <button onclick="loadMenu('${res}', this)">${resName[res] || res}</button>
+        <button onclick="loadMenu('${res}', this)">${names[res] || res}</button>
     `).join('');
     loadMenu(resKeys[0], document.querySelectorAll('#menu-depth2 button')[0]);
 }
