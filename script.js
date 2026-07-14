@@ -275,7 +275,6 @@ function pressCalc(key) {
         } catch {
             calcExpr = "Error";
         }
-    }
     } else {
         if (calcExpr === "0" && key !== '.') calcExpr = key;
         else calcExpr += key;
