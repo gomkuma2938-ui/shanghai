@@ -34,5 +34,16 @@
     <script src="data/schedule.js"></script>
     <!-- 로직 파일 -->
     <script src="script.js"></script>
+
+    <!-- 서비스 워커 등록 (오프라인 캐싱 활성화) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.warn('SW 등록 실패:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
