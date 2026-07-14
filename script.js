@@ -15,6 +15,14 @@ const resName = {
 let calcExpr = "0"; // 계산기 입력값
 let currentRate = localStorage.getItem('exchangeRate') || 223.0; // 환율
 
+// onclick 속성에 안전하게 넣기 위한 이스케이프 (작은따옴표, 큰따옴표, 백슬래시 처리)
+function escAttr(str) {
+    return String(str ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '&quot;');
+}
+
 // 2. 공통 유틸리티 함수
 function copy(text, event) {
     if (!text) return;
@@ -155,14 +163,14 @@ function renderLocCard(cat, idx, btn) {
 
     document.getElementById('app').innerHTML = `
         <div class="card">
-            <div onclick="copy('${item.cn}', event)">
+            <div onclick="copy('${escAttr(item.cn)}', event)">
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
             <span class="label-small">주소</span>
-            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+            <div class="content-text" onclick="copy('${escAttr(item.addr)}')">${item.addr}</div>
             <span class="label-small">지하철</span>
-            <div class="subway-line" onclick="copy('${cnPart}')">
+            <div class="subway-line" onclick="copy('${escAttr(cnPart)}')">
                 <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
@@ -205,7 +213,7 @@ function renderMenu(res, cat, btn) {
 
     const items = window.menuData[res][cat];
     document.getElementById('app').innerHTML = items.map(i => `
-        <div class="menu-card" onclick="copy('${i.cn}', event)">
+        <div class="menu-card" onclick="copy('${escAttr(i.cn)}', event)">
             <div class="text-area">
                 <div class="cn-big-menu">${i.cn}</div>
                 <div class="kr-med-menu">${i.kr}</div>
@@ -263,10 +271,11 @@ function pressCalc(key) {
         calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : "0";
     } else if (key === '=') {
         try {
-            calcExpr = String(eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')));
+            calcExpr = String(safeCalc(calcExpr));
         } catch {
             calcExpr = "Error";
         }
+    }
     } else {
         if (calcExpr === "0" && key !== '.') calcExpr = key;
         else calcExpr += key;
@@ -281,13 +290,20 @@ function updateCalcDisplay() {
 
     let resultNum = 0;
     try {
-        resultNum = eval(calcExpr.replace(/×/g, '*').replace(/÷/g, '/')) || 0;
+        resultNum = safeCalc(calcExpr) || 0;
     } catch {
         resultNum = 0;
     }
 
     cnyElement.innerText = calcExpr + " CNY";
     krwElement.innerHTML = Math.round(resultNum * currentRate).toLocaleString() + "<span>원</span>";
+}
+
+// 사칙연산만 허용하는 안전한 계산기 (eval 대체)
+function safeCalc(expr) {
+    const clean = expr.replace(/×/g, '*').replace(/÷/g, '/');
+    if (!/^[0-9+\-*/.() ]+$/.test(clean)) throw new Error("잘못된 입력");
+    return Function('"use strict"; return (' + clean + ')')();
 }
 
 function updateRate(val) {
@@ -446,7 +462,7 @@ function renderInfoRow(idx, key, label, val, ph, isDate = false) {
     return `
         <div class="info-row">
             <label>${label}</label>
-            <input type="text" id="${id}" value="${val}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
+            <input type="text" id="${id}" value="${escAttr(val).replace(/&quot;/g, '"')}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
             <button class="btn-copy-small" onclick="copy(document.getElementById('${id}').value)">복사</button>
         </div>`;
 }
