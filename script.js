@@ -98,6 +98,7 @@ function showLocationTab(btn) {
         <button onclick="renderLocation('hotel', this)">호텔/공항</button>
         <button onclick="renderLocation('tour', this)">관광지</button>
         <button onclick="renderLocation('restaurant', this)">식당</button>
+        <button onclick="renderLocation('others', this)">기타</button>
     `;
     renderLocation('hotel', document.querySelectorAll('#menu-depth2 button')[0]);
 }
