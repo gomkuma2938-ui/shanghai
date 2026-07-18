@@ -39,7 +39,9 @@
     <!-- 이미지 확대용 모달 추가 -->
     <div id="imgModal" class="image-zoom-modal">
         <div class="close-zoom-btn" onclick="closeZoom()">&times;</div>
-        <img id="modalImg" class="zoom-content">
+        <div class="zoom-container">
+            <img id="modalImg" class="zoom-content">
+        </div>
     </div>
 
     <!-- 서비스 워커 등록 (오프라인 캐싱 활성화) -->
