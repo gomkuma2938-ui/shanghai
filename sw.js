@@ -51,7 +51,7 @@ self.addEventListener('fetch', (e) => {
 
   // 그 외(HTML/CSS/JS/데이터 파일): 자주 바뀔 수 있으므로 네트워크 우선, 실패 시 캐시로 대체
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-store' })
       .then(res => {
         // 유효한 응답인 경우에만 캐시에 저장
         if (res && res.status === 200) {
