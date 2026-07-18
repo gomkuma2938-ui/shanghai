@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shanghai-v3'; // 이미지 대응을 위해 버전 업
+const CACHE_NAME = 'shanghai-v4';; // 이미지 대응을 위해 버전 업
 const ASSETS = [
   './',
   './index.html',
