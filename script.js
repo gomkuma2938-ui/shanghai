@@ -33,102 +33,112 @@ function copy(text, event) {
     });
 }
 
-// 이미지 확대 (핀치 줌 및 드래그 지원)
+// 이미지 확대 전역 변수
 let startDist = 0, startScale = 1, currentScale = 1;
 let translateX = 0, translateY = 0;
 let startX = 0, startY = 0;
 let lastTranslateX = 0, lastTranslateY = 0;
 let isPinching = false;
 
+// 이미지 확대 열기 (외부 호출용)
 function openZoom(src) {
     const modal = document.getElementById('imgModal');
     const img = document.getElementById('modalImg');
     if (!modal || !img) return;
-    
+
     img.src = src;
-    img.style.transform = 'translate(0px, 0px) scale(1)';
-    modal.classList.add('active');
-    
+    // 초기화
     currentScale = 1;
     translateX = 0;
     translateY = 0;
     lastTranslateX = 0;
     lastTranslateY = 0;
-    document.body.style.overflow = 'hidden'; // 스크롤 방지
+    img.style.transform = `translate(0px, 0px) scale(1)`;
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
+// 이미지 확대 닫기
 function closeZoom() {
     const modal = document.getElementById('imgModal');
-    if (!modal) return;
-    modal.classList.remove('active');
-    document.body.style.overflow = ''; // 스크롤 재개
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
-// 모달 배경 클릭 시 닫기
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('imgModal');
-    const modalImg = document.getElementById('modalImg');
-    if (!modal || !modalImg) return;
+// 터치 이벤트 초기화 (스크립트 로드 시 즉시 실행)
+(function initZoomEvents() {
+    window.addEventListener('load', () => {
+        const modal = document.getElementById('imgModal');
+        const modalImg = document.getElementById('modalImg');
+        if (!modal || !modalImg) return;
 
-    modal.addEventListener('click', function(e) {
-        if (e.target === this) closeZoom();
-    });
+        // 배경 클릭 시 닫기
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'imgModal') closeZoom();
+        });
 
-    function applyTransform() {
-        const screenW = window.innerWidth;
-        const screenH = window.innerHeight;
-        
-        const scaledW = modalImg.offsetWidth * currentScale;
-        const scaledH = modalImg.offsetHeight * currentScale;
+        function applyTransform() {
+            const screenW = window.innerWidth;
+            const screenH = window.innerHeight;
+            
+            // 이미지가 화면에 보여진 후의 실제 크기 기반 계산
+            const scaledW = modalImg.offsetWidth * currentScale;
+            const scaledH = modalImg.offsetHeight * currentScale;
 
-        // 드래그 가능 범위 계산
-        const maxX = Math.max(0, (scaledW - screenW) / 2);
-        const maxY = Math.max(0, (scaledH - screenH) / 2);
+            const maxX = Math.max(0, (scaledW - screenW) / 2);
+            const maxY = Math.max(0, (scaledH - screenH) / 2);
 
-        translateX = Math.min(maxX, Math.max(-maxX, translateX));
-        translateY = Math.min(maxY, Math.max(-maxY, translateY));
-        
-        modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-    }
-
-    modalImg.addEventListener('touchstart', e => {
-        if (e.touches.length === 2) {
-            isPinching = true;
-            startDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            startScale = currentScale;
-        } else if (e.touches.length === 1) {
-            startX = e.touches[0].clientX - lastTranslateX;
-            startY = e.touches[0].clientY - lastTranslateY;
+            translateX = Math.min(maxX, Math.max(-maxX, translateX));
+            translateY = Math.min(maxY, Math.max(-maxY, translateY));
+            
+            modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
         }
-    });
 
-    modalImg.addEventListener('touchmove', e => {
-        if (!modal.classList.contains('active')) return;
-        e.preventDefault();
-        
-        if (e.touches.length === 2) {
-            const dist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            currentScale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
-            applyTransform();
-        } else if (e.touches.length === 1 && !isPinching) {
-            translateX = e.touches[0].clientX - startX;
-            translateY = e.touches[0].clientY - startY;
-            applyTransform();
-        }
-    }, { passive: false });
+        modalImg.addEventListener('touchstart', e => {
+            if (e.touches.length === 2) {
+                isPinching = true;
+                startDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                startScale = currentScale;
+            } else if (e.touches.length === 1) {
+                startX = e.touches[0].clientX - lastTranslateX;
+                startY = e.touches[0].clientY - lastTranslateY;
+            }
+        }, { passive: true });
 
-    modalImg.addEventListener('touchend', e => {
-        if (e.touches.length < 2) isPinching = false;
-        lastTranslateX = translateX;
-        lastTranslateY = translateY;
+        modalImg.addEventListener('touchmove', e => {
+            if (!modal.classList.contains('active')) return;
+            
+            if (e.touches.length === 2) {
+                e.preventDefault(); // 핀치 줌 중 스크롤 방지
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                currentScale = Math.min(Math.max(startScale * (dist / startDist), 1), 5);
+                applyTransform();
+            } else if (e.touches.length === 1 && !isPinching) {
+                if (currentScale > 1) {
+                    e.preventDefault(); // 확대된 상태에서만 드래그 시 스크롤 방지
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    applyTransform();
+                }
+            }
+        }, { passive: false });
+
+        modalImg.addEventListener('touchend', e => {
+            if (e.touches.length < 2) {
+                isPinching = false;
+                lastTranslateX = translateX;
+                lastTranslateY = translateY;
+            }
+        }, { passive: true });
     });
-});
+})();
 
 function showToast(msg) {
     const toast = document.getElementById('toast');
