@@ -95,7 +95,7 @@ function closeZoom() {
             modalImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
         }
 
-        modalImg.addEventListener('touchstart', e => {
+        modal.addEventListener('touchstart', e => {
             if (e.touches.length === 2) {
                 isPinching = true;
                 startDist = Math.hypot(
@@ -109,7 +109,7 @@ function closeZoom() {
             }
         }, { passive: true });
 
-        modalImg.addEventListener('touchmove', e => {
+        modal.addEventListener('touchmove', e => {
             if (!modal.classList.contains('active')) return;
             
             if (e.touches.length === 2) {
@@ -130,7 +130,7 @@ function closeZoom() {
             }
         }, { passive: false });
 
-        modalImg.addEventListener('touchend', e => {
+        modal.addEventListener('touchend', e => {
             if (e.touches.length < 2) {
                 isPinching = false;
                 lastTranslateX = translateX;
