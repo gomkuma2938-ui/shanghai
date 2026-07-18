@@ -23,7 +23,7 @@ function copy(text, event) {
         event.preventDefault();
     }
 
-    // 기존 선택된 영역 강제 해제[cite: 3]
+    // 기존 선택된 영역 강제 해제
     if (window.getSelection) {
         window.getSelection().removeAllRanges();
     }
@@ -31,6 +31,23 @@ function copy(text, event) {
     navigator.clipboard.writeText(text).then(() => {
         showToast("복사 완료: " + text);
     });
+}
+
+// 이미지 확대 및 닫기 기능
+function openZoom(src) {
+    const modal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-img');
+    if (!modal || !modalImg) return;
+    modalImg.src = src;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden'; // 스크롤 방지
+}
+
+function closeZoom() {
+    const modal = document.getElementById('image-modal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    document.body.style.overflow = ''; // 스크롤 재개
 }
 
 function showToast(msg) {
@@ -141,7 +158,42 @@ function renderLocCard(cat, idx, btn) {
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 운영시간 및 설명 HTML 구성
+    // 갤러리 섹션 구성
+    let galleryHtml = "";
+    if (item.gallery && item.gallery.length > 0) {
+        galleryHtml = `<div class="rich-gallery">` + item.gallery.map(g => {
+            // 지도(isMap)이거나, 제목과 설명이 모두 없는 경우 100% 너비로 출력
+            const isFullWidth = g.isMap || (!g.title && !g.desc);
+            
+            if (isFullWidth) {
+                return `
+                <div class="rich-item rich-item-full">
+                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                        <img src="${g.src}" class="rich-img-thumb">
+                        <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
+                    </div>
+                    ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
+                </div>`;
+            } else {
+                // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
+                return `
+                <div class="rich-item rich-item-side">
+                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                        <img src="${g.src}" class="rich-img-thumb">
+                        <div class="zoom-tag-normal">🔍</div>
+                    </div>
+                    <div class="rich-item-desc">
+                        ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>`;
+            }
+        }).join('') + `</div>`;
+    }
+
+    // 운영시간 및 공통 설명 HTML 구성
     let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
     let descHtml = "";
     if (item.desc) {
@@ -168,6 +220,7 @@ function renderLocCard(cat, idx, btn) {
             </div>
             ${hoursHtml}
             ${descHtml}
+            ${galleryHtml}
         </div>
     `;
     window.scrollTo(0, 0);
@@ -330,7 +383,7 @@ function renderTalkCategory(cat, btn) {
     document.getElementById('app').innerHTML = `
         <div style="padding:10px 5px;" id="talk-list">
             ${items.map((t, idx) => `
-                <div class="talk-item" onclick="toggleTalkHighlight(this)">
+                <div class="talk-item" onclick="toggleTalkHighlight(this, '${escAttr(t.cn)}')">
                     <div style="flex:1">
                         <div class="talk-cn">${t.cn}</div>
                         <div class="talk-py-read">${t.py} / ${t.kr_read}</div>
@@ -342,8 +395,8 @@ function renderTalkCategory(cat, btn) {
     window.scrollTo(0, 0);
 }
 
-// 회화 강조 토글 함수 (페이지당 1개만 가능)
-function toggleTalkHighlight(el) {
+// 회화 강조 토글 및 자동 복사 함수
+function toggleTalkHighlight(el, text) {
     const isAlreadyActive = el.classList.contains('active');
     
     // 1. 일단 모든 강조 해제
@@ -351,9 +404,15 @@ function toggleTalkHighlight(el) {
         item.classList.remove('active');
     });
 
-    // 2. 이미 강조된 걸 누른 게 아니라면, 지금 누른 것만 강조
+    // 2. 이미 강조된 걸 누른 게 아니라면 강조 후 복사 실행
     if (!isAlreadyActive) {
         el.classList.add('active');
+        if (text) {
+            // 강조와 동시에 클립보드 복사 실행
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("복사됨: " + text);
+            });
+        }
     }
 }
 

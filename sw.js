@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shanghai-v2'; // 데이터 바뀔 때마다 버전 숫자 올리기
+const CACHE_NAME = 'shanghai-v3'; // 이미지 대응을 위해 버전 업
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,8 @@ const ASSETS = [
   './data/restaurant.js',
   './data/menu_data.js',
   './data/talk.js',
-  './data/schedule.js'
+  './data/schedule.js',
+  './data/others.js'
 ];
 
 self.addEventListener('install', (e) => {
@@ -26,11 +27,17 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // 이미지 파일(.jpg, .png)인 경우 캐시 우선 전략 사용 가능하나, 
+  // 기존 로직 유지하며 네트워크 우선 후 캐시 업데이트 방식으로 처리
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        caches.open(CACHE_NAME).then(cache => cache.put(e.request, res.clone()));
-        return res.clone();
+        // 유효한 응답인 경우에만 캐시에 저장
+        if (res && res.status === 200) {
+            const resClone = res.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(e.request, resClone));
+        }
+        return res;
       })
       .catch(() => caches.match(e.request))
   );
