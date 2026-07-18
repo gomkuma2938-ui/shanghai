@@ -267,12 +267,11 @@ function renderLocCard(cat, idx, btn) {
                 </div>`;
             } else {
                 // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
-                return `
+            return `
                 <div class="rich-item rich-item-side">
                     ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                    <div class="rich-img-box">
                         <img src="${g.src}" class="rich-img-thumb">
-                        <div class="zoom-tag-normal">🔍</div>
                     </div>
                     <div class="rich-item-desc">
                         ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
