@@ -21,7 +21,6 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
-      // addAll 대신 개별 캐싱 → 하나 실패해도 install 전체가 죽지 않음
       Promise.all(
         ASSETS.map(url =>
           fetch(url, { cache: 'no-store' })
@@ -45,22 +44,23 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // 이미지: 네트워크 우선, 실패(오프라인 등) 시에만 캐시로 대체
   if (isImageRequest(e.request)) {
     e.respondWith(
-      caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(res => {
+      fetch(e.request)
+        .then(res => {
           if (res && res.status === 200) {
             const resClone = res.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(e.request, resClone));
           }
           return res;
-        });
-      })
+        })
+        .catch(() => caches.match(e.request))
     );
     return;
   }
 
+  // 그 외(HTML/CSS/JS/데이터 파일): 동일하게 네트워크 우선, 실패 시 캐시
   e.respondWith(
     fetch(e.request, { cache: 'no-store' })
       .then(res => {
