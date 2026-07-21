@@ -507,11 +507,11 @@ function toggleTalkHighlight(el, text) {
 }
 
 // ==========================================
-// [탭 5: 정보 (멤버/일정/QR) 관련] - 예약 QR 전용 로직
+// [탭 5: 정보 (일정/멤버/QR) 관련]
 // ==========================================
 
 function showInfoTab(btn) {
-    setAppLayout('mid');
+    // 진입 시점에는 일정이 기본이므로 레이아웃은 all(2줄바)
     setActiveFooter(btn);
 
     document.getElementById('menu-depth2').innerHTML = `
@@ -519,15 +519,46 @@ function showInfoTab(btn) {
         <button onclick="renderInfoMembers(this)">일행 정보</button>
         <button onclick="renderInfoQRTab(this)">예약 QR</button>
     `;
+    
     renderInfoScheduleTab(document.querySelector('#menu-depth2 button'));
 }
 
-// 5-3. 예약 QR 탭 (qrData 사용)
-function renderInfoQRTab(btn) {
-    setAppLayout('all');
+function renderInfoScheduleTab(btn) {
+    setAppLayout('all'); // 일정은 날짜바(3뎁스)가 필요함
     activateButton('#menu-depth2', btn);
 
-    const list = window.qrData || []; // othersData가 아닌 qrData를 사용합니다.
+    const days = Object.keys(window.scheduleData || {});
+    renderMenuBarAndSelectFirst(
+        'menu-depth3',
+        days,
+        d => d,
+        d => `renderDaySchedule('${d}', this)`,
+        renderDaySchedule
+    );
+}
+
+function renderInfoMembers(btn) {
+    setAppLayout('mid'); // 멤버 정보는 3뎁스가 필요 없으므로 숨김
+    activateButton('#menu-depth2', btn);
+
+    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:18px; margin-bottom:15px;">👥 일행 정보 (4명)</div>`;
+    for (let i = 1; i <= 4; i++) {
+        const n = localStorage.getItem(`mem-n-${i}`) || "";   const sn = localStorage.getItem(`mem-sn-${i}`) || "";
+        const gn = localStorage.getItem(`mem-gn-${i}`) || ""; const p = localStorage.getItem(`mem-p-${i}`) || "";
+        const b = localStorage.getItem(`mem-b-${i}`) || "";   const e = localStorage.getItem(`mem-e-${i}`) || "";
+        html += `<div class="member-card"><div class="member-header">멤버 ${i}</div>
+                ${renderInfoRow(i,'n','이름',n,'홍길동')}${renderInfoRow(i,'sn','영문 성',sn,'HONG')}
+                ${renderInfoRow(i,'gn','영문 이름',gn,'GILDONG')}${renderInfoRow(i,'p','여권번호',p,'M00000000')}
+                ${renderInfoRow(i,'b','생년월일',b,'1990-01-01',true)}${renderInfoRow(i,'e','여권만료',e,'2030-01-01',true)}</div>`;
+    }
+    document.getElementById('app').innerHTML = html + `</div>`;
+}
+
+function renderInfoQRTab(btn) {
+    setAppLayout('all'); // QR 목록(3뎁스)이 보여야 함
+    activateButton('#menu-depth2', btn);
+
+    const list = window.qrData || [];
     if (list.length === 0) {
         document.getElementById('menu-depth3').innerHTML = "";
         document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">등록된 예약 QR이 없습니다.</div>`;
@@ -536,41 +567,36 @@ function renderInfoQRTab(btn) {
 
     renderMenuBarAndSelectFirst(
         'menu-depth3',
-        list.map((i, idx) => idx),
+        list.map((_, idx) => idx),
         idx => list[idx].kr,
         idx => `renderReservationQR(${idx}, this)`,
-        (idx, firstBtn) => renderReservationQR(idx, firstBtn)
+        (idx, b) => renderReservationQR(idx, b)
     );
 }
 
 function renderReservationQR(idx, btn) {
     activateButton('#menu-depth3', btn);
-    const item = window.qrData[idx]; // qrData에서 가져옴
+    const item = window.qrData[idx];
     if (!item) return;
 
-    let htmlHeader = `<div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn || ''}</div>
-                      <span class="label-small">주소/위치</span><div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>`;
-
-    let htmlBody = "";
+    let htmlH = `<div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn || ''}</div><span class="label-small">주소</span><div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>`;
+    
+    let htmlB = "";
     Object.keys(item).forEach(key => {
         if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
         if (key === 'qrs') {
-            htmlBody += `<div class="qr-slider-container">` + item.qrs.map(q => `
+            htmlB += `<div class="qr-slider-container">` + item.qrs.map(q => `
                 <div class="qr-card">
                     <div class="qr-owner-name">${q.name || "미지정"}</div>
                     <div class="qr-img-box" onclick="openZoom('${q.src}')">
-                        <img src="${q.src}">
-                        <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 크게보기</div>
+                        <img src="${q.src}"><div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 크게보기</div>
                     </div>
-                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 (스냅) ▶</div>`;
+                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 ▶</div>`;
         } 
-        else if (key === 'gallery') {
-            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `<div class="rich-item rich-item-full"><div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div></div>`).join('') + `</div>`;
-        }
         else if (key.startsWith('desc')) {
-            if (key !== 'desc') htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
-            htmlBody += createDescBlock(item[key]);
+            if (key !== 'desc') htmlB += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
+            htmlB += createDescBlock(item[key]);
         }
     });
-    document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
+    document.getElementById('app').innerHTML = `<div class="card">${htmlH}${htmlB}</div>`;
 }
