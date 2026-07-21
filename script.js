@@ -311,33 +311,40 @@ function renderLocCard(cat, idx, btn) {
     let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
     let descHtml = "";
     if (item.desc) {
-        const lines = item.desc.split('\n');
-        const firstLine = lines[0];
-        const bodyHtml = lines.slice(1).join('\n').trim().split('\n').map(p => {
-            return p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '';
-        }).join('');
-        descHtml = `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
+        descHtml += createDescBlock(item.desc);
     }
 
+    // [추가된 부분] 두 번째 설명(desc2) 처리 (있을 때만 작동)
+    if (item.desc2) {
+        descHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
+        descHtml += createDescBlock(item.desc2);
+    }
+    
     document.getElementById('app').innerHTML = `
         <div class="card">
-            <div onclick="copy('${escAttr(item.cn)}', event)">
+            <div onclick="copy('${item.cn}')">
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
             <span class="label-small">주소</span>
-            <div class="content-text" onclick="copy('${escAttr(item.addr)}')">${item.addr}</div>
+            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
             <span class="label-small">지하철</span>
-            <div class="subway-line" onclick="copy('${escAttr(cnPart)}')">
+            <div class="subway-line" onclick="copy('${cnPart}')">
                 <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
             ${hoursHtml}
             ${descHtml}
-            ${galleryHtml}
-        </div>
-    `;
+        </div>`;
     window.scrollTo(0, 0);
+}
+
+// 설명을 블록으로 만들어주는 보조 함수 (가독성을 위해 분리)
+function createDescBlock(text) {
+    const lines = text.split('\n');
+    const firstLine = lines[0];
+    const bodyHtml = lines.slice(1).map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
+    return `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
 }
 
 // ==========================================
