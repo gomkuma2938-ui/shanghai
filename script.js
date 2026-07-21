@@ -237,12 +237,8 @@ function showLocationTab(btn) {
 
 function renderLocation(cat, btn) {
     activateButton('#menu-depth2', btn);
-
     const list = window[cat + 'Data'];
-    if (!list) {
-        alert(cat + " 데이터 파일이 없습니다.");
-        return;
-    }
+    if (!list) return;
 
     renderMenuBarAndSelectFirst(
         'menu-depth3',
@@ -258,11 +254,10 @@ function renderLocCard(cat, idx, btn) {
     if (!list || !list[idx]) return;
 
     activateButton('#menu-depth3', btn);
-
     const item = list[idx];
-    let krPart = "", cnPart = "", lineTags = "";
 
-    // 1. 지하철 정보 파싱 (상단 헤더 고정용)
+    // 상단 고정 헤더 (이름, 주소, 지하철)
+    let krPart = "", cnPart = "", lineTags = "";
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -270,13 +265,11 @@ function renderLocCard(cat, idx, btn) {
         krPart = stationMatch ? stationMatch[1].trim() : mainSub;
         if (!krPart.endsWith('역')) krPart += '역';
         cnPart = stationMatch ? stationMatch[2].trim() : "";
-        
         const lines = item.sub.match(/\d+/g) || [];
         lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 2. 상단 헤더 HTML (이름, 주소, 지하철)
     let htmlHeader = `
         <div onclick="copy('${item.cn}')">
             <div class="kr-med">${item.kr}</div>
@@ -291,76 +284,31 @@ function renderLocCard(cat, idx, btn) {
         </div>
     `;
 
-    // 3. 본문 생성 (데이터에 적힌 순서대로 순회)
+    // 가변 본문 (데이터 입력 순서대로 출력)
     let htmlBody = "";
     Object.keys(item).forEach(key => {
-        // 헤더에 이미 쓴 정보는 건너뜀
         if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
 
-        // 운영시간
         if (key === 'hours') {
             htmlBody += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
         } 
-        // 사진 갤러리
         else if (key === 'gallery') {
-            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => {
-                const isFull = g.isMap || (!g.title && !g.desc);
-                if (isFull) {
-                    return `<div class="rich-item rich-item-full">
-                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                        <div class="rich-img-box" onclick="openZoom('${g.src}')">
-                            <img src="${g.src}" class="rich-img-thumb">
-                            <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
-                        </div>
-                        ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
-                    </div>`;
-                } else {
-                    return `<div class="rich-item rich-item-side">
-                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                        <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
-                        <div class="rich-item-desc">${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}</div>
-                        <div style="clear:both;"></div>
-                    </div>`;
-                }
-            }).join('') + `</div>`;
-        } 
-        // [복구] QR 슬라이더
-        else if (key === 'qrs') {
-            htmlBody += `<div class="qr-slider-container">` + item.qrs.map(q => `
-                <div class="qr-card">
-                    <div class="qr-owner-name">${q.name || "미지정"}</div>
-                    <div class="qr-img-box" onclick="openZoom('${q.src}')">
-                        <img src="${q.src}">
-                        <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 터치하여 크게보기</div>
+            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `
+                <div class="rich-item rich-item-full">
+                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                        <img src="${g.src}" class="rich-img-thumb">
                     </div>
-                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 (스냅) ▶</div>`;
-        }
-        // 모든 설명 (desc, desc2, desc3...)
+                </div>`).join('') + `</div>`;
+        } 
         else if (key.startsWith('desc')) {
-            if (key !== 'desc') { // desc2부터는 구분선 추가
-                htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
-            }
+            if (key !== 'desc') htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
             htmlBody += createDescBlock(item[key]);
         }
     });
 
     document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
     window.scrollTo(0, 0);
-}
-
-// 설명을 블록으로 만들어주는 보조 함수 (기존 로직 유지)
-function createDescBlock(text) {
-    const lines = text.split('\n');
-    const isFirstLineContent = lines[0].trim().startsWith('<strong>') || lines.length === 1;
-
-    if (isFirstLineContent) {
-        const bodyHtml = lines.map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
-        return `<div class="desc"><div class="desc-body">${bodyHtml}</div></div>`;
-    } else {
-        const firstLine = lines[0];
-        const bodyHtml = lines.slice(1).map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
-        return `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
-    }
 }
 
 // ==========================================
