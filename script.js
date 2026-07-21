@@ -273,52 +273,28 @@ function renderLocCard(cat, idx, btn) {
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 갤러리 섹션 구성
-    let galleryHtml = "";
-    if (item.gallery && item.gallery.length > 0) {
-        galleryHtml = `<div class="rich-gallery">` + item.gallery.map(g => {
-            // 지도(isMap)이거나, 제목과 설명이 모두 없는 경우 100% 너비로 출력
-            const isFullWidth = g.isMap || (!g.title && !g.desc);
+    // 가변 본문: 데이터에 적힌 필드 순서(hours/gallery/desc/desc2 등)를 그대로 따라감
+    let bodyHtml = "";
+    let hasPrevBlock = false;
+    Object.keys(item).forEach(key => {
+        if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
 
-            if (isFullWidth) {
-                return `
-                <div class="rich-item rich-item-full">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
-                        <img src="${g.src}" class="rich-img-thumb">
-                        <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
-                    </div>
-                    ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
-                </div>`;
-            } else {
-                // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
-                return `
-                <div class="rich-item rich-item-side">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box">
-                        <img src="${g.src}" class="rich-img-thumb">
-                    </div>
-                    <div class="rich-item-desc">
-                        ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>`;
+        if (key === 'hours') {
+            bodyHtml += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
+            hasPrevBlock = true;
+        }
+        else if (key === 'gallery') {
+            bodyHtml += buildGalleryHtml(item.gallery);
+            hasPrevBlock = true;
+        }
+        else if (key.startsWith('desc')) {
+            if (hasPrevBlock) {
+                bodyHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
             }
-        }).join('') + `</div>`;
-    }
-
-    // 운영시간 및 공통 설명 HTML 구성
-    let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
-    let descHtml = "";
-    if (item.desc) {
-        descHtml += createDescBlock(item.desc);
-    }
-
-    // 두 번째 설명(desc2) 처리 (있을 때만 작동)
-    if (item.desc2) {
-        descHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
-        descHtml += createDescBlock(item.desc2);
-    }
+            bodyHtml += createDescBlock(item[key]);
+            hasPrevBlock = true;
+        }
+    });
 
     document.getElementById('app').innerHTML = `
         <div class="card">
@@ -333,11 +309,44 @@ function renderLocCard(cat, idx, btn) {
                 <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
-            ${hoursHtml}
-            ${galleryHtml}
-            ${descHtml}
+            ${bodyHtml}
         </div>`;
     window.scrollTo(0, 0);
+}
+
+// 갤러리 섹션 HTML 생성 (지도/단독 이미지는 전체너비, 설명 딸린 이미지는 좌측 float)
+function buildGalleryHtml(gallery) {
+    if (!gallery || gallery.length === 0) return "";
+
+    return `<div class="rich-gallery">` + gallery.map(g => {
+        // 지도(isMap)이거나, 제목과 설명이 모두 없는 경우 100% 너비로 출력
+        const isFullWidth = g.isMap || (!g.title && !g.desc);
+
+        if (isFullWidth) {
+            return `
+            <div class="rich-item rich-item-full">
+                ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                    <img src="${g.src}" class="rich-img-thumb">
+                    <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
+                </div>
+                ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
+            </div>`;
+        } else {
+            // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
+            return `
+            <div class="rich-item rich-item-side">
+                ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                <div class="rich-img-box">
+                    <img src="${g.src}" class="rich-img-thumb">
+                </div>
+                <div class="rich-item-desc">
+                    ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
+                </div>
+                <div style="clear:both;"></div>
+            </div>`;
+        }
+    }).join('') + `</div>`;
 }
 
 // 설명을 블록으로 만들어주는 보조 함수 (첫 줄은 헤더, 나머지는 본문 문단으로 분리)
