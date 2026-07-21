@@ -259,7 +259,7 @@ function renderLocCard(cat, idx, btn) {
     const item = list[idx];
     let krPart = "", cnPart = "", lineTags = "";
 
-    // 지하철 정보 파싱
+    // 지하철 정보 파싱 (상단 고정 노출용)
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -273,39 +273,34 @@ function renderLocCard(cat, idx, btn) {
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 가변 본문: 데이터에 적힌 필드 순서(hours/gallery/desc/desc2 등)를 그대로 따라감
+    // 본문 구성: 데이터 객체(item)에 정의된 순서대로 렌더링
     let bodyHtml = "";
-    let hasPrevBlock = false;
     Object.keys(item).forEach(key => {
+        // 상단에 이미 출력한 기본 정보는 건너뜀
         if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
 
         if (key === 'hours') {
             bodyHtml += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
-            hasPrevBlock = true;
         }
         else if (key === 'gallery') {
             bodyHtml += buildGalleryHtml(item.gallery);
-            hasPrevBlock = true;
         }
         else if (key.startsWith('desc')) {
-            if (hasPrevBlock) {
-                bodyHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
-            }
+            // desc가 여러 개일 경우를 위해 데이터에 적힌 순서대로 처리
             bodyHtml += createDescBlock(item[key]);
-            hasPrevBlock = true;
         }
     });
 
     document.getElementById('app').innerHTML = `
         <div class="card">
-            <div onclick="copy('${item.cn}')">
+            <div onclick="copy('${escAttr(item.cn)}', event)">
                 <div class="kr-med">${item.kr}</div>
                 <div class="cn-big">${item.cn}</div>
             </div>
             <span class="label-small">주소</span>
-            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+            <div class="content-text" onclick="copy('${escAttr(item.addr)}', event)">${item.addr}</div>
             <span class="label-small">지하철</span>
-            <div class="subway-line" onclick="copy('${cnPart}')">
+            <div class="subway-line" onclick="copy('${escAttr(cnPart)}', event)">
                 <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
                 <div class="subway-tags">${lineTags}</div>
             </div>
@@ -604,39 +599,64 @@ function renderDaySchedule(day, btn) {
     window.scrollTo(0, 0);
 }
 
-// 일행 정보 입력 필드 1줄 렌더링 (라벨 + input + 복사버튼, 값은 localStorage에 자동 저장)
-// idx: 멤버 번호(1~4), field: localStorage 키 접미사, isDate: true면 date input
-function renderInfoRow(idx, field, label, value, placeholder, isDate) {
-    const type = isDate ? 'date' : 'text';
-    const inputId = `mem-input-${field}-${idx}`;
+// 보조: 정보 입력 행 구성 (복사 버튼 기능 복구 및 입력 타입 최적화)
+function renderInfoRow(idx, key, label, val, ph, isDate = false) {
+    const id = `mem-${key}-${idx}`;
+    const onInput = isDate ? `oninput="formatDateInput(this)"` : "";
     return `
         <div class="info-row">
             <label>${label}</label>
-            <input id="${inputId}" type="${type}" value="${escAttr(value)}" placeholder="${placeholder}"
-                oninput="saveMemberField(${idx}, '${field}', this.value)">
-            <button type="button" class="btn-copy-small" onclick="copy(document.getElementById('${inputId}').value, event)">복사</button>
-        </div>
-    `;
+            <input type="text" id="${id}" value="${escAttr(val)}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
+            <button type="button" class="btn-copy-small" onclick="copy(document.getElementById('${id}').value, event)">복사</button>
+        </div>`;
 }
 
-// 일행 정보 입력값을 localStorage 에 저장 (mem-{field}-{idx})
-function saveMemberField(idx, field, value) {
-    localStorage.setItem(`mem-${field}-${idx}`, value);
+// 보조: 날짜 하이픈 자동 생성
+function formatDateInput(obj) {
+    let v = obj.value.replace(/\D/g, "");
+    if (v.length > 8) v = v.substring(0, 8);
+    if (v.length > 4 && v.length <= 6) {
+        v = v.substring(0, 4) + "-" + v.substring(4);
+    } else if (v.length > 6) {
+        v = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6);
+    }
+    obj.value = v;
+}
+
+// 보조: 멤버 데이터 저장
+function saveMem(i) {
+    localStorage.setItem(`mem-n-${i}`, document.getElementById(`mem-n-${i}`).value);
+    localStorage.setItem(`mem-sn-${i}`, document.getElementById(`mem-sn-${i}`).value);
+    localStorage.setItem(`mem-gn-${i}`, document.getElementById(`mem-gn-${i}`).value);
+    localStorage.setItem(`mem-p-${i}`, document.getElementById(`mem-p-${i}`).value);
+    localStorage.setItem(`mem-b-${i}`, document.getElementById(`mem-b-${i}`).value);
+    localStorage.setItem(`mem-e-${i}`, document.getElementById(`mem-e-${i}`).value);
 }
 
 function renderInfoMembers(btn) {
-    setAppLayout('mid'); // 멤버 정보는 3뎁스가 필요 없으므로 숨김
+    setAppLayout('mid'); 
     activateButton('#menu-depth2', btn);
 
     let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:18px; margin-bottom:15px;">👥 일행 정보 (4명)</div>`;
+    
     for (let i = 1; i <= 4; i++) {
-        const n = localStorage.getItem(`mem-n-${i}`) || "";   const sn = localStorage.getItem(`mem-sn-${i}`) || "";
-        const gn = localStorage.getItem(`mem-gn-${i}`) || ""; const p = localStorage.getItem(`mem-p-${i}`) || "";
-        const b = localStorage.getItem(`mem-b-${i}`) || "";   const e = localStorage.getItem(`mem-e-${i}`) || "";
-        html += `<div class="member-card"><div class="member-header">멤버 ${i}</div>
-                ${renderInfoRow(i,'n','이름',n,'홍길동')}${renderInfoRow(i,'sn','영문 성',sn,'HONG')}
-                ${renderInfoRow(i,'gn','영문 이름',gn,'GILDONG')}${renderInfoRow(i,'p','여권번호',p,'M00000000')}
-                ${renderInfoRow(i,'b','생년월일',b,'1990-01-01',true)}${renderInfoRow(i,'e','여권만료',e,'2030-01-01',true)}</div>`;
+        const n = localStorage.getItem(`mem-n-${i}`) || "";
+        const sn = localStorage.getItem(`mem-sn-${i}`) || "";
+        const gn = localStorage.getItem(`mem-gn-${i}`) || "";
+        const p = localStorage.getItem(`mem-p-${i}`) || "";
+        const b = localStorage.getItem(`mem-b-${i}`) || "";
+        const e = localStorage.getItem(`mem-e-${i}`) || "";
+
+        html += `
+            <div class="member-card">
+                <div class="member-header">멤버 ${i}</div>
+                ${renderInfoRow(i, 'n', '이름', n, '홍길동')}
+                ${renderInfoRow(i, 'sn', '영문 성', sn, 'HONG')}
+                ${renderInfoRow(i, 'gn', '영문 이름', gn, 'GILDONG')}
+                ${renderInfoRow(i, 'p', '여권번호', p, 'M00000000')}
+                ${renderInfoRow(i, 'b', '생년월일', b, '1990-01-01', true)}
+                ${renderInfoRow(i, 'e', '여권만료', e, '2030-01-01', true)}
+            </div>`;
     }
     document.getElementById('app').innerHTML = html + `</div>`;
 }
