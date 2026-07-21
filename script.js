@@ -323,7 +323,7 @@ function buildGalleryHtml(gallery) {
                 ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
                 <div class="rich-img-box" onclick="openZoom('${g.src}')">
                     <img src="${g.src}" class="rich-img-thumb">
-                    <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
+                    <div class="zoom-tag-map">${g.isMap ? '🔍' : '🔍'}</div>
                 </div>
                 ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
             </div>`;
