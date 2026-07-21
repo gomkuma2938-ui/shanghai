@@ -330,3 +330,60 @@ body.layout-none #menu-depth3 { display: none !important; }
     cursor: pointer; z-index: 10005; padding: 15px;
     line-height: 1; text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
+
+/* --- QR 슬라이더 스타일 --- */
+.qr-slider-container {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    gap: 15px;
+    scroll-snap-type: x mandatory; /* 스냅 기능: 넘기면 딱 멈춤 */
+    padding: 10px 0 20px 0;
+    -webkit-overflow-scrolling: touch;
+}
+.qr-slider-container::-webkit-scrollbar { display: none; }
+
+.qr-card {
+    flex: 0 0 85%; /* 화면의 85% 크기로 카드가 보임 */
+    scroll-snap-align: center; /* 카드 중앙에 스냅 */
+    background: #f9f9f9;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.qr-owner-name {
+    font-size: 18px;
+    font-weight: 900;
+    color: #333;
+    margin-bottom: 15px;
+    background: #fff;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.qr-img-box {
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #eee;
+}
+
+.qr-img-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.qr-indicator {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
