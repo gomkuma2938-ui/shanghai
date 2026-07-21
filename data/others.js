@@ -2,7 +2,7 @@ window.othersData = [
   { 
     kr: '버스투어 집결지 (인민광장역)', 
     cn: '人民广场站 7号口', 
-    addr: '南京西路2-68号', 
+    addr: '新世界城 南2门', 
     sub: '인민광장역 (人民广场站) - 1·2·8호선 / 7번 출구',
     gallery: [
         { src: 'images/bus_01.jpg' },
