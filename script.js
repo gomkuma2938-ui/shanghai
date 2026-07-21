@@ -583,11 +583,11 @@ function renderDaySchedule(day, btn) {
     document.getElementById('app').innerHTML = `
         <div style="padding:10px 5px;">
             ${items.map(it => `
-                <div class="card" style="display:flex; gap:12px; padding:16px; margin-bottom:10px;">
-                    <div style="flex:0 0 56px; font-weight:900; color:#ff4757; font-size:13px;">${it.time}</div>
-                    <div style="flex:1;">
-                        <div style="font-weight:700; font-size:15px;">${it.title}</div>
-                        ${it.memo ? `<div style="font-size:13px; color:#888; margin-top:4px;">${it.memo}</div>` : ''}
+                <div class="schedule-item">
+                    <div class="sch-time">${it.time}</div>
+                    <div class="sch-info">
+                        <div class="sch-title">${it.title}</div>
+                        ${it.memo ? `<div class="sch-memo">${it.memo}</div>` : ''}
                     </div>
                 </div>
             `).join('')}
@@ -595,16 +595,17 @@ function renderDaySchedule(day, btn) {
     window.scrollTo(0, 0);
 }
 
-// 일행 정보 입력 필드 1줄 렌더링 (라벨 + input, 값은 localStorage에 자동 저장)
+// 일행 정보 입력 필드 1줄 렌더링 (라벨 + input + 복사버튼, 값은 localStorage에 자동 저장)
 // idx: 멤버 번호(1~4), field: localStorage 키 접미사, isDate: true면 date input
 function renderInfoRow(idx, field, label, value, placeholder, isDate) {
     const type = isDate ? 'date' : 'text';
+    const inputId = `mem-input-${field}-${idx}`;
     return `
-        <span class="label-small">${label}</span>
-        <div class="content-text" style="padding:0;">
-            <input type="${type}" value="${escAttr(value)}" placeholder="${placeholder}"
-                oninput="saveMemberField(${idx}, '${field}', this.value)"
-                style="width:100%; box-sizing:border-box; border:none; outline:none; background:transparent; font-size:15px; padding:12px 15px; font-family:inherit; color:inherit;">
+        <div class="info-row">
+            <label>${label}</label>
+            <input id="${inputId}" type="${type}" value="${escAttr(value)}" placeholder="${placeholder}"
+                oninput="saveMemberField(${idx}, '${field}', this.value)">
+            <button type="button" class="btn-copy-small" onclick="copy(document.getElementById('${inputId}').value, event)">복사</button>
         </div>
     `;
 }
