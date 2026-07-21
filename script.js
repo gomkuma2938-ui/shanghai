@@ -602,11 +602,11 @@ function renderDaySchedule(day, btn) {
 // 보조: 정보 입력 행 구성 (복사 버튼 기능 복구 및 입력 타입 최적화)
 function renderInfoRow(idx, key, label, val, ph, isDate = false) {
     const id = `mem-${key}-${idx}`;
-    const onInput = isDate ? `oninput="formatDateInput(this)"` : "";
+    const type = isDate ? 'date' : 'text';
     return `
         <div class="info-row">
             <label>${label}</label>
-            <input type="text" id="${id}" value="${escAttr(val)}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
+            <input type="${type}" id="${id}" value="${escAttr(val)}" onchange="saveMem(${idx})" placeholder="${ph}">
             <button type="button" class="btn-copy-small" onclick="copy(document.getElementById('${id}').value, event)">복사</button>
         </div>`;
 }
