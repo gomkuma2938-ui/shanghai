@@ -33,24 +33,6 @@ function copy(text, event) {
     });
 }
 
-// desc / desc2 등 설명 텍스트를 카드 안에 렌더링하는 공통 블록
-// (관광지 탭 renderLocCard, QR 탭 renderReservationQR 에서 공용으로 사용)
-function createDescBlock(text) {
-    if (!text) return '';
-
-    // \n 기준으로 문단을 나누되, 문단 안의 HTML 태그(<strong>, <span> 등)는 그대로 살립니다.
-    const paragraphs = String(text)
-        .split('\n')
-        .filter(line => line.trim() !== '')
-        .map(line => `<p style="margin:0 0 10px; line-height:1.6;">${line}</p>`)
-        .join('');
-
-    return `
-        <span class="label-small">설명</span>
-        <div class="content-text" style="white-space:normal;">${paragraphs}</div>
-    `;
-}
-
 // 이미지 확대 전역 변수
 let startDist = 0, startScale = 1, currentScale = 1;
 let translateX = 0, translateY = 0;
@@ -255,7 +237,8 @@ function showLocationTab(btn) {
 
 function renderLocation(cat, btn) {
     activateButton('#menu-depth2', btn);
-    const list = window[cat + 'Data']; // hotelData, tourData, othersData 등을 가져옴
+
+    const list = window[cat + 'Data'];
     if (!list) return;
 
     renderMenuBarAndSelectFirst(
@@ -272,10 +255,11 @@ function renderLocCard(cat, idx, btn) {
     if (!list || !list[idx]) return;
 
     activateButton('#menu-depth3', btn);
-    const item = list[idx];
 
-    // 상단 고정 헤더 (이름, 주소, 지하철)
+    const item = list[idx];
     let krPart = "", cnPart = "", lineTags = "";
+
+    // 지하철 정보 파싱
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -283,50 +267,86 @@ function renderLocCard(cat, idx, btn) {
         krPart = stationMatch ? stationMatch[1].trim() : mainSub;
         if (!krPart.endsWith('역')) krPart += '역';
         cnPart = stationMatch ? stationMatch[2].trim() : "";
+
         const lines = item.sub.match(/\d+/g) || [];
         lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    let htmlHeader = `
-        <div onclick="copy('${item.cn}')">
-            <div class="kr-med">${item.kr}</div>
-            <div class="cn-big">${item.cn}</div>
-        </div>
-        <span class="label-small">주소</span>
-        <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
-        <span class="label-small">지하철</span>
-        <div class="subway-line" onclick="copy('${cnPart}')">
-            <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
-            <div class="subway-tags">${lineTags}</div>
-        </div>
-    `;
+    // 갤러리 섹션 구성
+    let galleryHtml = "";
+    if (item.gallery && item.gallery.length > 0) {
+        galleryHtml = `<div class="rich-gallery">` + item.gallery.map(g => {
+            // 지도(isMap)이거나, 제목과 설명이 모두 없는 경우 100% 너비로 출력
+            const isFullWidth = g.isMap || (!g.title && !g.desc);
 
-    // 가변 본문 (데이터 입력 순서대로 출력)
-    let htmlBody = "";
-    Object.keys(item).forEach(key => {
-        if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
-
-        if (key === 'hours') {
-            htmlBody += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
-        } 
-        else if (key === 'gallery') {
-            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `
+            if (isFullWidth) {
+                return `
                 <div class="rich-item rich-item-full">
                     ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
                     <div class="rich-img-box" onclick="openZoom('${g.src}')">
                         <img src="${g.src}" class="rich-img-thumb">
+                        <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
                     </div>
-                </div>`).join('') + `</div>`;
-        } 
-        else if (key.startsWith('desc')) {
-            if (key !== 'desc') htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
-            htmlBody += createDescBlock(item[key]);
-        }
-    });
+                    ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
+                </div>`;
+            } else {
+                // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
+                return `
+                <div class="rich-item rich-item-side">
+                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                    <div class="rich-img-box">
+                        <img src="${g.src}" class="rich-img-thumb">
+                    </div>
+                    <div class="rich-item-desc">
+                        ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>`;
+            }
+        }).join('') + `</div>`;
+    }
 
-    document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
+    // 운영시간 및 공통 설명 HTML 구성
+    let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
+    let descHtml = "";
+    if (item.desc) {
+        descHtml += createDescBlock(item.desc);
+    }
+
+    // 두 번째 설명(desc2) 처리 (있을 때만 작동)
+    if (item.desc2) {
+        descHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
+        descHtml += createDescBlock(item.desc2);
+    }
+
+    document.getElementById('app').innerHTML = `
+        <div class="card">
+            <div onclick="copy('${item.cn}')">
+                <div class="kr-med">${item.kr}</div>
+                <div class="cn-big">${item.cn}</div>
+            </div>
+            <span class="label-small">주소</span>
+            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+            <span class="label-small">지하철</span>
+            <div class="subway-line" onclick="copy('${cnPart}')">
+                <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
+                <div class="subway-tags">${lineTags}</div>
+            </div>
+            ${hoursHtml}
+            ${galleryHtml}
+            ${descHtml}
+        </div>`;
     window.scrollTo(0, 0);
+}
+
+// 설명을 블록으로 만들어주는 보조 함수 (첫 줄은 헤더, 나머지는 본문 문단으로 분리)
+// 관광지 탭(renderLocCard)과 QR 탭(renderReservationQR)에서 공용으로 사용
+function createDescBlock(text) {
+    const lines = text.split('\n');
+    const firstLine = lines[0];
+    const bodyHtml = lines.slice(1).map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
+    return `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
 }
 
 // ==========================================
