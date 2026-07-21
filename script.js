@@ -220,7 +220,8 @@ window.onload = () => {
 // [탭 1: 위치 정보 관련]
 // ==========================================
 
-const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당', others: '기타' };
+// 기타(others) 카테고리를 추가해야 탭이 보입니다.
+const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당', others: '기타/QR' };
 
 function showLocationTab(btn) {
     setAppLayout('all');
@@ -235,6 +236,24 @@ function showLocationTab(btn) {
     );
 }
 
+function renderLocation(cat, btn) {
+    activateButton('#menu-depth2', btn);
+
+    const list = window[cat + 'Data'];
+    if (!list) {
+        alert(cat + " 데이터 파일이 없습니다.");
+        return;
+    }
+
+    renderMenuBarAndSelectFirst(
+        'menu-depth3',
+        list.map((i, idx) => idx),
+        idx => list[idx].kr,
+        idx => `renderLocCard('${cat}', ${idx}, this)`,
+        (idx, firstBtn) => renderLocCard(cat, idx, firstBtn)
+    );
+}
+
 function renderLocCard(cat, idx, btn) {
     const list = window[cat + 'Data'];
     if (!list || !list[idx]) return;
@@ -244,7 +263,7 @@ function renderLocCard(cat, idx, btn) {
     const item = list[idx];
     let krPart = "", cnPart = "", lineTags = "";
 
-    // 1. 지하철 정보 파싱 (상단 헤더용)
+    // 1. 지하철 정보 파싱 (상단 헤더 고정용)
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -258,86 +277,92 @@ function renderLocCard(cat, idx, btn) {
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 2. 갤러리 섹션 구성 (Rich Gallery)
-    let galleryHtml = "";
-    if (item.gallery && item.gallery.length > 0) {
-        galleryHtml = `<div class="rich-gallery">` + item.gallery.map(g => {
-            const isFullWidth = g.isMap || (!g.title && !g.desc);
-            if (isFullWidth) {
-                return `<div class="rich-item rich-item-full">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
-                        <img src="${g.src}" class="rich-img-thumb">
-                        <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
-                    </div>
-                    ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
-                </div>`;
-            } else {
-                return `<div class="rich-item rich-item-side">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
-                    <div class="rich-item-desc">${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}</div>
-                    <div style="clear:both;"></div>
-                </div>`;
-            }
-        }).join('') + `</div>`;
-    }
+    // 2. 상단 헤더 HTML (이름, 주소, 지하철)
+    let htmlHeader = `
+        <div onclick="copy('${item.cn}')">
+            <div class="kr-med">${item.kr}</div>
+            <div class="cn-big">${item.cn}</div>
+        </div>
+        <span class="label-small">주소</span>
+        <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+        <span class="label-small">지하철</span>
+        <div class="subway-line" onclick="copy('${cnPart}')">
+            <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
+            <div class="subway-tags">${lineTags}</div>
+        </div>
+    `;
 
-    // 3. [추가된 QR 슬라이더 로직]
-    let qrHtml = "";
-    if (item.qrs && item.qrs.length > 0) {
-        qrHtml = `<div class="qr-slider-container">` + item.qrs.map((q) => {
-            // 이제 localStorage가 아니라 데이터 파일(others.js)에 적힌 name을 바로 씁니다.
-            const displayName = q.name || "미지정"; 
-            return `
+    // 3. 본문 생성 (데이터에 적힌 순서대로 순회)
+    let htmlBody = "";
+    Object.keys(item).forEach(key => {
+        // 헤더에 이미 쓴 정보는 건너뜀
+        if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
+
+        // 운영시간
+        if (key === 'hours') {
+            htmlBody += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
+        } 
+        // 사진 갤러리
+        else if (key === 'gallery') {
+            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => {
+                const isFull = g.isMap || (!g.title && !g.desc);
+                if (isFull) {
+                    return `<div class="rich-item rich-item-full">
+                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                        <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                            <img src="${g.src}" class="rich-img-thumb">
+                            <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
+                        </div>
+                        ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
+                    </div>`;
+                } else {
+                    return `<div class="rich-item rich-item-side">
+                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                        <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
+                        <div class="rich-item-desc">${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}</div>
+                        <div style="clear:both;"></div>
+                    </div>`;
+                }
+            }).join('') + `</div>`;
+        } 
+        // [복구] QR 슬라이더
+        else if (key === 'qrs') {
+            htmlBody += `<div class="qr-slider-container">` + item.qrs.map(q => `
                 <div class="qr-card">
-                    <div class="qr-owner-name">${displayName}</div>
+                    <div class="qr-owner-name">${q.name || "미지정"}</div>
                     <div class="qr-img-box" onclick="openZoom('${q.src}')">
                         <img src="${q.src}">
                         <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 터치하여 크게보기</div>
                     </div>
-                </div>`;
-        }).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 (스냅) ▶</div>`;
-    }
+                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 (스냅) ▶</div>`;
+        }
+        // 모든 설명 (desc, desc2, desc3...)
+        else if (key.startsWith('desc')) {
+            if (key !== 'desc') { // desc2부터는 구분선 추가
+                htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
+            }
+            htmlBody += createDescBlock(item[key]);
+        }
+    });
 
-    // 4. 운영시간 및 설명 HTML 구성
-    let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
-    let descHtml = item.desc ? createDescBlock(item.desc) : "";
-    if (item.desc2) {
-        descHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>` + createDescBlock(item.desc2);
-    }
-    
-    // 5. 최종 화면 출력
-    document.getElementById('app').innerHTML = `
-        <div class="card">
-            <div onclick="copy('${item.cn}')">
-                <div class="kr-med">${item.kr}</div>
-                <div class="cn-big">${item.cn}</div>
-            </div>
-            <span class="label-small">주소</span>
-            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
-            <span class="label-small">지하철</span>
-            <div class="subway-line" onclick="copy('${cnPart}')">
-                <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
-                <div class="subway-tags">${lineTags}</div>
-            </div>
-            ${hoursHtml}
-            ${qrHtml}       <!-- 추가된 QR 슬라이더 -->
-            ${galleryHtml}
-            ${descHtml}
-        </div>`;
+    document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
     window.scrollTo(0, 0);
 }
 
-// 설명을 블록으로 만들어주는 보조 함수 (가독성을 위해 분리)
+// 설명을 블록으로 만들어주는 보조 함수 (기존 로직 유지)
 function createDescBlock(text) {
     const lines = text.split('\n');
-    const firstLine = lines[0];
-    const bodyHtml = lines.slice(1).map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
-    return `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
+    const isFirstLineContent = lines[0].trim().startsWith('<strong>') || lines.length === 1;
+
+    if (isFirstLineContent) {
+        const bodyHtml = lines.map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
+        return `<div class="desc"><div class="desc-body">${bodyHtml}</div></div>`;
+    } else {
+        const firstLine = lines[0];
+        const bodyHtml = lines.slice(1).map(p => p.trim() ? `<p class="desc-para">${p.trim()}</p>` : '').join('');
+        return `<div class="desc"><div class="desc-header">${firstLine}</div><div class="desc-body">${bodyHtml}</div></div>`;
+    }
 }
-
-
 
 // ==========================================
 // [탭 2: 메뉴판 관련]
