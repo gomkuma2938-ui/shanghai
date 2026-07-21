@@ -220,7 +220,7 @@ window.onload = () => {
 // [탭 1: 위치 정보 관련]
 // ==========================================
 
-const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당' };
+const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당', others: '기타' };
 
 function showLocationTab(btn) {
     setAppLayout('all');
@@ -237,7 +237,7 @@ function showLocationTab(btn) {
 
 function renderLocation(cat, btn) {
     activateButton('#menu-depth2', btn);
-    const list = window[cat + 'Data'];
+    const list = window[cat + 'Data']; // hotelData, tourData, othersData 등을 가져옴
     if (!list) return;
 
     renderMenuBarAndSelectFirst(
@@ -507,37 +507,33 @@ function toggleTalkHighlight(el, text) {
 }
 
 // ==========================================
-// [탭 5: 정보 (멤버/일정/QR) 관련]
+// [탭 5: 정보 (멤버/일정/QR) 관련] - 예약 QR 전용 로직
 // ==========================================
 
 function showInfoTab(btn) {
-    setAppLayout('mid'); // 기본 1줄바 모드
+    setAppLayout('mid');
     setActiveFooter(btn);
 
-    // 상단 2뎁스 메뉴 구성
     document.getElementById('menu-depth2').innerHTML = `
         <button onclick="renderInfoScheduleTab(this)">여행 일정</button>
         <button onclick="renderInfoMembers(this)">일행 정보</button>
         <button onclick="renderInfoQRTab(this)">예약 QR</button>
     `;
-    
-    // 첫 화면은 여행 일정으로 로드
     renderInfoScheduleTab(document.querySelector('#menu-depth2 button'));
 }
 
-// 5-3. 예약 QR 탭 (others.js 데이터 사용)
+// 5-3. 예약 QR 탭 (qrData 사용)
 function renderInfoQRTab(btn) {
-    setAppLayout('all'); // 3뎁스(장소 목록)가 보여야 하므로 all 모드
+    setAppLayout('all');
     activateButton('#menu-depth2', btn);
 
-    const list = window.othersData;
-    if (!list || list.length === 0) {
+    const list = window.qrData || []; // othersData가 아닌 qrData를 사용합니다.
+    if (list.length === 0) {
         document.getElementById('menu-depth3').innerHTML = "";
         document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">등록된 예약 QR이 없습니다.</div>`;
         return;
     }
 
-    // 3뎁스에 예약 명칭(디즈니, 마그레브 등) 뿌리기
     renderMenuBarAndSelectFirst(
         'menu-depth3',
         list.map((i, idx) => idx),
@@ -547,49 +543,34 @@ function renderInfoQRTab(btn) {
     );
 }
 
-// 5-4. 선택된 예약의 QR 카드 렌더링
 function renderReservationQR(idx, btn) {
     activateButton('#menu-depth3', btn);
-    const item = window.othersData[idx];
+    const item = window.qrData[idx]; // qrData에서 가져옴
     if (!item) return;
 
-    // 헤더 구성 (기존 위치카드와 동일한 UI)
-    let htmlHeader = `
-        <div class="kr-med">${item.kr}</div>
-        <div class="cn-big">${item.cn || ''}</div>
-        <span class="label-small">관련 주소/위치</span>
-        <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
-    `;
+    let htmlHeader = `<div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn || ''}</div>
+                      <span class="label-small">주소/위치</span><div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>`;
 
-    // 본문 구성 (데이터 순서대로 - QR 슬라이더 포함)
     let htmlBody = "";
     Object.keys(item).forEach(key => {
         if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
-
         if (key === 'qrs') {
             htmlBody += `<div class="qr-slider-container">` + item.qrs.map(q => `
                 <div class="qr-card">
                     <div class="qr-owner-name">${q.name || "미지정"}</div>
                     <div class="qr-img-box" onclick="openZoom('${q.src}')">
                         <img src="${q.src}">
-                        <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 터치하여 크게보기</div>
+                        <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 크게보기</div>
                     </div>
-                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 ▶</div>`;
+                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 (스냅) ▶</div>`;
         } 
+        else if (key === 'gallery') {
+            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `<div class="rich-item rich-item-full"><div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div></div>`).join('') + `</div>`;
+        }
         else if (key.startsWith('desc')) {
             if (key !== 'desc') htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
             htmlBody += createDescBlock(item[key]);
         }
-        else if (key === 'gallery') {
-            // QR 카드 안에도 일반 사진이 들어갈 수 있게 처리
-            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `
-                <div class="rich-item rich-item-full">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
-                </div>`).join('') + `</div>`;
-        }
     });
-
     document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
-    window.scrollTo(0, 0);
 }
