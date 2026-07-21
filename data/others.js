@@ -14,15 +14,5 @@ window.othersData = [
         cn: '上海世纪联华世纪店 ', 
         addr: '上海市浦东新区张杨路与福山路交叉口西南120米', 
         sub: '스지따다오역 (世纪大道站) - 2·4·6·9호선',
-        },
-    { 
-        kr: '입국신고서 QR', 
-        cn: '外国人入境卡',
-        qrs: [
-            { name: '박종현', src: 'images/qr_disney_1.png' },
-            { name: '한재순', src: 'images/qr_disney_2.png' },
-            { name: '박윤희', src: 'images/qr_disney_3.png' },
-            { name: '박현수', src: 'images/qr_disney_4.png' }
-        ]
-    }  
+        }
 ];
