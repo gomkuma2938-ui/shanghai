@@ -599,15 +599,20 @@ function renderDaySchedule(day, btn) {
     window.scrollTo(0, 0);
 }
 
-// 보조: 정보 입력 행 구성 (복사 버튼 기능 복구 및 입력 타입 최적화)
+// 보조: 정보 입력 행 구성
 function renderInfoRow(idx, key, label, val, ph, isDate = false) {
     const id = `mem-${key}-${idx}`;
     const type = isDate ? 'date' : 'text';
+    // 날짜 타입일 경우 replace(/-/g, '')를 통해 하이픈 제거 후 복사
+    const copyTarget = isDate 
+        ? `document.getElementById('${id}').value.replace(/-/g, '')` 
+        : `document.getElementById('${id}').value`;
+
     return `
         <div class="info-row">
             <label>${label}</label>
             <input type="${type}" id="${id}" value="${escAttr(val)}" onchange="saveMem(${idx})" placeholder="${ph}">
-            <button type="button" class="btn-copy-small" onclick="copy(document.getElementById('${id}').value, event)">복사</button>
+            <button type="button" class="btn-copy-small" onclick="copy(${copyTarget}, event)">복사</button>
         </div>`;
 }
 
