@@ -33,6 +33,24 @@ function copy(text, event) {
     });
 }
 
+// desc / desc2 등 설명 텍스트를 카드 안에 렌더링하는 공통 블록
+// (관광지 탭 renderLocCard, QR 탭 renderReservationQR 에서 공용으로 사용)
+function createDescBlock(text) {
+    if (!text) return '';
+
+    // \n 기준으로 문단을 나누되, 문단 안의 HTML 태그(<strong>, <span> 등)는 그대로 살립니다.
+    const paragraphs = String(text)
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .map(line => `<p style="margin:0 0 10px; line-height:1.6;">${line}</p>`)
+        .join('');
+
+    return `
+        <span class="label-small">설명</span>
+        <div class="content-text" style="white-space:normal;">${paragraphs}</div>
+    `;
+}
+
 // 이미지 확대 전역 변수
 let startDist = 0, startScale = 1, currentScale = 1;
 let translateX = 0, translateY = 0;
@@ -535,6 +553,45 @@ function renderInfoScheduleTab(btn) {
         d => `renderDaySchedule('${d}', this)`,
         renderDaySchedule
     );
+}
+
+// 특정 날짜의 일정 목록 렌더링 (schedule.js: {time, title, memo}[])
+function renderDaySchedule(day, btn) {
+    activateButton('#menu-depth3', btn);
+    const items = (window.scheduleData || {})[day] || [];
+
+    document.getElementById('app').innerHTML = `
+        <div style="padding:10px 5px;">
+            ${items.map(it => `
+                <div class="card" style="display:flex; gap:12px; padding:16px; margin-bottom:10px;">
+                    <div style="flex:0 0 56px; font-weight:900; color:#ff4757; font-size:13px;">${it.time}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:15px;">${it.title}</div>
+                        ${it.memo ? `<div style="font-size:13px; color:#888; margin-top:4px;">${it.memo}</div>` : ''}
+                    </div>
+                </div>
+            `).join('')}
+        </div>`;
+    window.scrollTo(0, 0);
+}
+
+// 일행 정보 입력 필드 1줄 렌더링 (라벨 + input, 값은 localStorage에 자동 저장)
+// idx: 멤버 번호(1~4), field: localStorage 키 접미사, isDate: true면 date input
+function renderInfoRow(idx, field, label, value, placeholder, isDate) {
+    const type = isDate ? 'date' : 'text';
+    return `
+        <span class="label-small">${label}</span>
+        <div class="content-text" style="padding:0;">
+            <input type="${type}" value="${escAttr(value)}" placeholder="${placeholder}"
+                oninput="saveMemberField(${idx}, '${field}', this.value)"
+                style="width:100%; box-sizing:border-box; border:none; outline:none; background:transparent; font-size:15px; padding:12px 15px; font-family:inherit; color:inherit;">
+        </div>
+    `;
+}
+
+// 일행 정보 입력값을 localStorage 에 저장 (mem-{field}-{idx})
+function saveMemberField(idx, field, value) {
+    localStorage.setItem(`mem-${field}-${idx}`, value);
 }
 
 function renderInfoMembers(btn) {
