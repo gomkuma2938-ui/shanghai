@@ -625,12 +625,13 @@ function formatDateInput(obj) {
 
 // 보조: 멤버 데이터 저장
 function saveMem(i) {
-    localStorage.setItem(`mem-n-${i}`, document.getElementById(`mem-n-${i}`).value);
-    localStorage.setItem(`mem-sn-${i}`, document.getElementById(`mem-sn-${i}`).value);
-    localStorage.setItem(`mem-gn-${i}`, document.getElementById(`mem-gn-${i}`).value);
-    localStorage.setItem(`mem-p-${i}`, document.getElementById(`mem-p-${i}`).value);
-    localStorage.setItem(`mem-b-${i}`, document.getElementById(`mem-b-${i}`).value);
-    localStorage.setItem(`mem-e-${i}`, document.getElementById(`mem-e-${i}`).value);
+    const fields = ['n', 'sn', 'gn', 'p', 'b', 'e'];
+    fields.forEach(key => {
+        const input = document.getElementById(`mem-${key}-${i}`);
+        if (input) {
+            localStorage.setItem(`mem-${key}-${i}`, input.value);
+        }
+    });
 }
 
 function renderInfoMembers(btn) {
