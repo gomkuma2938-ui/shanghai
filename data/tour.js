@@ -229,7 +229,7 @@ window.tourData = [
            gallery: [
             { src: 'images/wuzhen_1.jpg' }
         ],
-        desc2: "<strong>①모순 옛집 (The Former Residence of Mao Dun)</strong> : 중국 현대문학을 대표하는 작가 '모순'이 거주했던 집\n<strong>②유류량 동전 박물관 (Yu Liuliang's Coin Museum)</strong>40여 년간 모은 230여 개 국가의 동전 25,000여 점 전시\n<strong>③목각 박물관 (Woodcarving Museum)\n정교한 목조 조각 기술을 전시하는 공간\n<strong>④학당 (Academy)</strong> : 드라마 <대명풍화>, <사물과거> 등의 촬영지로 사용된 장소\n<strong>⑤소방서 박물관 (Fire Department)</strong> : 전통 소방 도구와 화재 진압 장비를 전시한 공간\n<strong>⑥홍원태 염방 (Indigo Fabric Workshop)</strong> : 앞은 상점, 뒤는 작업장 구조로 전통 쪽염색 제품 제작·전시\n<strong>⑦양조장 체험관 (Wine Distillery Workshop)</strong> : 청나라 시기부터 이어진 전통 양조 방식으로 삼백주 생산\n<strong>⑧민속 박물관 (Folk Custom Museum)</strong>결혼식, 생일, 명절 등 우전 지역의 전통 생활 문화를 소개하는 박물관\n<strong>⑨고대 침대 박물관 (Ancient Bed Museum)</strong> : 명·청 시대부터 현대까지의 전통 침대를 전시한 박물관"
+        desc2: "<strong>①모순 옛집(The Former Residence of Mao Dun)</strong> : 중국 현대문학을 대표하는 작가 '모순'이 거주했던 집\n<strong>②유류량 동전 박물관(Yu Liuliang's Coin Museum)</strong>40여 년간 모은 230여 개 국가의 동전 25,000여 점 전시\n<strong>③목각 박물관 (Woodcarving Museum)</strong> : 정교한 목조 조각 기술을 전시하는 공간\n<strong>④학당 (Academy)</strong> : 드라마 <대명풍화>, <사물과거> 등의 촬영지로 사용된 장소\n<strong>⑤소방서 박물관 (Fire Department)</strong> : 전통 소방 도구와 화재 진압 장비를 전시한 공간\n<strong>⑥홍원태 염방 (Indigo Fabric Workshop)</strong> : 앞은 상점, 뒤는 작업장 구조로 전통 쪽염색 제품 제작·전시\n<strong>⑦양조장 체험관 (Wine Distillery Workshop)</strong> : 청나라 시기부터 이어진 전통 양조 방식으로 삼백주 생산\n<strong>⑧민속 박물관 (Folk Custom Museum)</strong>결혼식, 생일, 명절 등 우전 지역의 전통 생활 문화를 소개하는 박물관\n<strong>⑨고대 침대 박물관 (Ancient Bed Museum)</strong> : 명·청 시대부터 현대까지의 전통 침대를 전시한 박물관"
     },    
     { 
         kr: '우전(서책)', cn: '乌镇', addr: '浙江省嘉兴桐乡市乌镇', 
