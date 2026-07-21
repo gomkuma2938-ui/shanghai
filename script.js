@@ -611,18 +611,6 @@ function renderInfoRow(idx, key, label, val, ph, isDate = false) {
         </div>`;
 }
 
-// 보조: 날짜 하이픈 자동 생성
-function formatDateInput(obj) {
-    let v = obj.value.replace(/\D/g, "");
-    if (v.length > 8) v = v.substring(0, 8);
-    if (v.length > 4 && v.length <= 6) {
-        v = v.substring(0, 4) + "-" + v.substring(4);
-    } else if (v.length > 6) {
-        v = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6);
-    }
-    obj.value = v;
-}
-
 // 보조: 멤버 데이터 저장
 function saveMem(i) {
     const fields = ['n', 'sn', 'gn', 'p', 'b', 'e'];
