@@ -287,11 +287,11 @@ function renderLocCard(cat, idx, btn) {
     let qrHtml = "";
     if (item.qrs && item.qrs.length > 0) {
         qrHtml = `<div class="qr-slider-container">` + item.qrs.map((q) => {
-            // 정보 탭에서 저장된 이름을 가져옴 (없으면 멤버1.. 표시)
-            const savedName = localStorage.getItem(`mem-n-${q.nameIdx}`) || `멤버 ${q.nameIdx}`;
+            // 이제 localStorage가 아니라 데이터 파일(others.js)에 적힌 name을 바로 씁니다.
+            const displayName = q.name || "미지정"; 
             return `
                 <div class="qr-card">
-                    <div class="qr-owner-name">${savedName}</div>
+                    <div class="qr-owner-name">${displayName}</div>
                     <div class="qr-img-box" onclick="openZoom('${q.src}')">
                         <img src="${q.src}">
                         <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 터치하여 크게보기</div>
