@@ -220,8 +220,7 @@ window.onload = () => {
 // [탭 1: 위치 정보 관련]
 // ==========================================
 
-// 기타(others) 카테고리를 추가해야 탭이 보입니다.
-const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당', others: '기타/QR' };
+const LOCATION_CATEGORIES = { hotel: '호텔/공항', tour: '관광지', restaurant: '식당' };
 
 function showLocationTab(btn) {
     setAppLayout('all');
@@ -560,120 +559,89 @@ function toggleTalkHighlight(el, text) {
 }
 
 // ==========================================
-// [탭 5: 정보 (멤버/일정) 관련] - 3뎁스 구조 개편
+// [탭 5: 정보 (멤버/일정/QR) 관련]
 // ==========================================
 
 function showInfoTab(btn) {
-    // 3뎁스(날짜 바)가 보여야 하므로 'all' 모드로 시작
-    setAppLayout('all'); 
+    setAppLayout('mid'); // 기본 1줄바 모드
     setActiveFooter(btn);
 
+    // 상단 2뎁스 메뉴 구성
     document.getElementById('menu-depth2').innerHTML = `
         <button onclick="renderInfoScheduleTab(this)">여행 일정</button>
         <button onclick="renderInfoMembers(this)">일행 정보</button>
+        <button onclick="renderInfoQRTab(this)">예약 QR</button>
     `;
     
-    // 여행 일정이 기본으로 로드됨
+    // 첫 화면은 여행 일정으로 로드
     renderInfoScheduleTab(document.querySelector('#menu-depth2 button'));
 }
 
-// 5-1. 일행 정보 화면 (2뎁스 유지)
-function renderInfoMembers(btn) {
-    // 탭 이동 시 3뎁스(날짜 바)를 확실히 숨김
-    setAppLayout('mid'); 
+// 5-3. 예약 QR 탭 (others.js 데이터 사용)
+function renderInfoQRTab(btn) {
+    setAppLayout('all'); // 3뎁스(장소 목록)가 보여야 하므로 all 모드
     activateButton('#menu-depth2', btn);
 
-    let html = `<div style="padding:10px 5px;"><div style="font-weight:900; font-size:18px; margin-bottom:15px;">👥 일행 정보 (4명)</div>`;
-    
-    for (let i = 1; i <= 4; i++) {
-        const n = localStorage.getItem(`mem-n-${i}`) || "";
-        const sn = localStorage.getItem(`mem-sn-${i}`) || "";
-        const gn = localStorage.getItem(`mem-gn-${i}`) || "";
-        const p = localStorage.getItem(`mem-p-${i}`) || "";
-        const b = localStorage.getItem(`mem-b-${i}`) || "";
-        const e = localStorage.getItem(`mem-e-${i}`) || "";
-
-        html += `
-            <div class="member-card">
-                <div class="member-header">멤버 ${i}</div>
-                ${renderInfoRow(i, 'n', '이름', n, '홍길동')}
-                ${renderInfoRow(i, 'sn', '영문 성', sn, 'HONG')}
-                ${renderInfoRow(i, 'gn', '영문 이름', gn, 'GILDONG')}
-                ${renderInfoRow(i, 'p', '여권번호', p, 'M00000000')}
-                ${renderInfoRow(i, 'b', '생년월일', b, '1990-01-01', true)}
-                ${renderInfoRow(i, 'e', '여권만료', e, '2030-01-01', true)}
-            </div>`;
+    const list = window.othersData;
+    if (!list || list.length === 0) {
+        document.getElementById('menu-depth3').innerHTML = "";
+        document.getElementById('app').innerHTML = `<div style="padding:20px; text-align:center;">등록된 예약 QR이 없습니다.</div>`;
+        return;
     }
-    document.getElementById('app').innerHTML = html + `</div>`;
-}
 
-// 5-2. 여행 일정 탭 설정 (3뎁스 활성화)
-function renderInfoScheduleTab(btn) {
-    setAppLayout('all');
-    activateButton('#menu-depth2', btn);
-
-    const sch = window.scheduleData || {};
-    const days = Object.keys(sch);
-
+    // 3뎁스에 예약 명칭(디즈니, 마그레브 등) 뿌리기
     renderMenuBarAndSelectFirst(
         'menu-depth3',
-        days,
-        day => day,
-        day => `renderDaySchedule('${day}', this)`,
-        renderDaySchedule
+        list.map((i, idx) => idx),
+        idx => list[idx].kr,
+        idx => `renderReservationQR(${idx}, this)`,
+        (idx, firstBtn) => renderReservationQR(idx, firstBtn)
     );
 }
 
-// 5-3. 실제 특정 날짜의 일정 렌더링
-function renderDaySchedule(day, btn) {
+// 5-4. 선택된 예약의 QR 카드 렌더링
+function renderReservationQR(idx, btn) {
     activateButton('#menu-depth3', btn);
+    const item = window.othersData[idx];
+    if (!item) return;
 
-    const sch = window.scheduleData[day] || [];
-    let html = `<div style="padding:10px 5px;">`;
+    // 헤더 구성 (기존 위치카드와 동일한 UI)
+    let htmlHeader = `
+        <div class="kr-med">${item.kr}</div>
+        <div class="cn-big">${item.cn || ''}</div>
+        <span class="label-small">관련 주소/위치</span>
+        <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+    `;
 
-    html += sch.map(s => `
-        <div class="schedule-item">
-            <div class="sch-time">${s.time}</div>
-            <div class="sch-info">
-                <div class="sch-title">${s.title}</div>
-                <div class="sch-memo">${s.memo}</div>
-            </div>
-        </div>`).join('');
-    
-    document.getElementById('app').innerHTML = html + `</div>`;
+    // 본문 구성 (데이터 순서대로 - QR 슬라이더 포함)
+    let htmlBody = "";
+    Object.keys(item).forEach(key => {
+        if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
+
+        if (key === 'qrs') {
+            htmlBody += `<div class="qr-slider-container">` + item.qrs.map(q => `
+                <div class="qr-card">
+                    <div class="qr-owner-name">${q.name || "미지정"}</div>
+                    <div class="qr-img-box" onclick="openZoom('${q.src}')">
+                        <img src="${q.src}">
+                        <div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 터치하여 크게보기</div>
+                    </div>
+                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 ▶</div>`;
+        } 
+        else if (key.startsWith('desc')) {
+            if (key !== 'desc') htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
+            htmlBody += createDescBlock(item[key]);
+        }
+        else if (key === 'gallery') {
+            // QR 카드 안에도 일반 사진이 들어갈 수 있게 처리
+            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => `
+                <div class="rich-item rich-item-full">
+                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                    <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
+                </div>`).join('') + `</div>`;
+        }
+    });
+
+    document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
     window.scrollTo(0, 0);
-}
-
-// 보조: 정보 입력 행 구성
-function renderInfoRow(idx, key, label, val, ph, isDate = false) {
-    const id = `${key}-${idx}`;
-    const onInput = isDate ? `oninput="formatDateInput(this)"` : "";
-    return `
-        <div class="info-row">
-            <label>${label}</label>
-            <input type="text" id="${id}" value="${escAttr(val).replace(/&quot;/g, '"')}" ${onInput} onchange="saveMem(${idx})" placeholder="${ph}">
-            <button class="btn-copy-small" onclick="copy(document.getElementById('${id}').value)">복사</button>
-        </div>`;
-}
-
-// 보조: 날짜 하이픈 자동 생성
-function formatDateInput(obj) {
-    let v = obj.value.replace(/\D/g, "");
-    if (v.length > 8) v = v.substring(0, 8);
-    if (v.length > 4 && v.length <= 6) {
-        v = v.substring(0, 4) + "-" + v.substring(4);
-    } else if (v.length > 6) {
-        v = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6);
-    }
-    obj.value = v;
-}
-
-// 보조: 멤버 데이터 저장
-function saveMem(i) {
-    localStorage.setItem(`mem-n-${i}`, document.getElementById(`n-${i}`).value);
-    localStorage.setItem(`mem-sn-${i}`, document.getElementById(`sn-${i}`).value);
-    localStorage.setItem(`mem-gn-${i}`, document.getElementById(`gn-${i}`).value);
-    localStorage.setItem(`mem-p-${i}`, document.getElementById(`p-${i}`).value);
-    localStorage.setItem(`mem-b-${i}`, document.getElementById(`b-${i}`).value);
-    localStorage.setItem(`mem-e-${i}`, document.getElementById(`e-${i}`).value);
 }
