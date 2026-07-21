@@ -259,7 +259,7 @@ function renderLocCard(cat, idx, btn) {
     const item = list[idx];
     let krPart = "", cnPart = "", lineTags = "";
 
-    // 지하철 정보 파싱
+    // [고정 상단부] 지하철 정보 파싱 (상단 헤더용)
     if (item.sub) {
         const subParts = item.sub.split('-');
         const mainSub = subParts[0].trim();
@@ -267,76 +267,67 @@ function renderLocCard(cat, idx, btn) {
         krPart = stationMatch ? stationMatch[1].trim() : mainSub;
         if (!krPart.endsWith('역')) krPart += '역';
         cnPart = stationMatch ? stationMatch[2].trim() : "";
-        
         const lines = item.sub.match(/\d+/g) || [];
         lineTags = lines.map(l => `<span class="subway-tag line-${l}">${l}</span>`).join('');
         if (item.sub.includes('Maglev')) lineTags += `<span class="subway-tag maglev">M</span>`;
     }
 
-    // 갤러리 섹션 구성
-    let galleryHtml = "";
-    if (item.gallery && item.gallery.length > 0) {
-        galleryHtml = `<div class="rich-gallery">` + item.gallery.map(g => {
-            // 지도(isMap)이거나, 제목과 설명이 모두 없는 경우 100% 너비로 출력
-            const isFullWidth = g.isMap || (!g.title && !g.desc);
-            
-            if (isFullWidth) {
-                return `
-                <div class="rich-item rich-item-full">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box" onclick="openZoom('${g.src}')">
-                        <img src="${g.src}" class="rich-img-thumb">
-                        <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
-                    </div>
-                    ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
-                </div>`;
-            } else {
-                // 설명이 있는 경우 제목을 상단에 두고 이미지를 좌측 float 처리
-                return `
-                <div class="rich-item rich-item-side">
-                    ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
-                    <div class="rich-img-box">
-                        <img src="${g.src}" class="rich-img-thumb">
-                    </div>
-                    <div class="rich-item-desc">
-                        ${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>`;
+    // [헤더 생성] 이름, 주소, 지하철은 항상 상단 고정
+    let htmlHeader = `
+        <div onclick="copy('${item.cn}')">
+            <div class="kr-med">${item.kr}</div>
+            <div class="cn-big">${item.cn}</div>
+        </div>
+        <span class="label-small">주소</span>
+        <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
+        <span class="label-small">지하철</span>
+        <div class="subway-line" onclick="copy('${cnPart}')">
+            <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
+            <div class="subway-tags">${lineTags}</div>
+        </div>
+    `;
+
+    // [가변 본문 생성] 데이터에 쓴 순서대로 내용을 쌓음
+    let htmlBody = "";
+    Object.keys(item).forEach(key => {
+        // 이미 상단에 표시한 항목들은 건너뜀
+        if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
+
+        if (key === 'hours') {
+            htmlBody += `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>`;
+        } 
+        else if (key === 'gallery') {
+            htmlBody += `<div class="rich-gallery">` + item.gallery.map(g => {
+                const isFull = g.isMap || (!g.title && !g.desc);
+                if (isFull) {
+                    return `<div class="rich-item rich-item-full">
+                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                        <div class="rich-img-box" onclick="openZoom('${g.src}')">
+                            <img src="${g.src}" class="rich-img-thumb">
+                            <div class="zoom-tag-map">${g.isMap ? '🔍 지도 확대보기' : '🔍 확대보기'}</div>
+                        </div>
+                        ${g.desc ? `<div class="rich-item-desc">${g.desc.split('\n').map(p => `<p>${p}</p>`).join('')}</div>` : ''}
+                    </div>`;
+                } else {
+                    return `<div class="rich-item rich-item-side">
+                        ${g.title ? `<div class="rich-item-title">${g.title}</div>` : ''}
+                        <div class="rich-img-box" onclick="openZoom('${g.src}')"><img src="${g.src}" class="rich-img-thumb"></div>
+                        <div class="rich-item-desc">${g.desc ? g.desc.split('\n').map(p => `<p>${p}</p>`).join('') : ''}</div>
+                        <div style="clear:both;"></div>
+                    </div>`;
+                }
+            }).join('') + `</div>`;
+        } 
+        else if (key.startsWith('desc')) {
+            // desc, desc2, desc3... 등 모든 설명 처리
+            if (key !== 'desc') { // desc2부터는 구분선 추가
+                htmlBody += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
             }
-        }).join('') + `</div>`;
-    }
+            htmlBody += createDescBlock(item[key]);
+        }
+    });
 
-    // 운영시간 및 공통 설명 HTML 구성
-    let hoursHtml = item.hours ? `<span class="label-hours">운영시간</span><div class="content-hours">${item.hours}</div>` : "";
-    let descHtml = "";
-    if (item.desc) {
-        descHtml += createDescBlock(item.desc);
-    }
-
-    // [추가된 부분] 두 번째 설명(desc2) 처리 (있을 때만 작동)
-    if (item.desc2) {
-        descHtml += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`; // 구분선
-        descHtml += createDescBlock(item.desc2);
-    }
-    
-    document.getElementById('app').innerHTML = `
-        <div class="card">
-            <div onclick="copy('${item.cn}')">
-                <div class="kr-med">${item.kr}</div>
-                <div class="cn-big">${item.cn}</div>
-            </div>
-            <span class="label-small">주소</span>
-            <div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>
-            <span class="label-small">지하철</span>
-            <div class="subway-line" onclick="copy('${cnPart}')">
-                <span class="cn-sub">${cnPart}</span><span class="kr-sub">${krPart}</span>
-                <div class="subway-tags">${lineTags}</div>
-            </div>
-            ${hoursHtml}
-            ${galleryHtml}
-            ${descHtml}
-        </div>`;
+    document.getElementById('app').innerHTML = `<div class="card">${htmlHeader}${htmlBody}</div>`;
     window.scrollTo(0, 0);
 }
 
