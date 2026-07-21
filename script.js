@@ -334,6 +334,7 @@ function renderLocCard(cat, idx, btn) {
                 <div class="subway-tags">${lineTags}</div>
             </div>
             ${hoursHtml}
+            ${galleryHtml}
             ${descHtml}
         </div>`;
     window.scrollTo(0, 0);
