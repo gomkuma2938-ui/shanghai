@@ -9,7 +9,7 @@ window.hotelData = [
         kr: '푸동공항 (T1/T2)', 
         cn: '上海浦东国际机场', 
         addr: '上海市浦东新区迎宾大道6000号', 
-        sub: '푸동공항역 (浦东国际机场站) - 2호선 / 자기부상열차(Maglev)'
-        // 설명(desc) 삭제 완료
+        sub: '푸동공항역 (浦东国际机场站) - 2호선 / 자기부상열차(Maglev)',
+        desc:'공항 픽업 정보\n<strong>예약 번호</strong> : 1400827871033169(공항 픽업)\n<strong>픽업시간</strong> : 2026년 8월 1일 00:15\n<strong>운전기사 이름</strong> : duhaibin\n<strong>운전기사 전화</strong> : +86-17621108990 표준 중국어\n<strong>차량번호</strong> : 沪AFU1819\n<strong>차량 브랜드</strong> : D9(블랙)\n'
     }
 ];
