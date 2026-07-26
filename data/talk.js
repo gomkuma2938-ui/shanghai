@@ -1,12 +1,24 @@
 window.talkData = {
     "기본/필수": [
+        { cn: "不好意思", py: "bù hǎoyìsi", kr_read: "부하오이쓰", kr: "실례합니다 / 저기요" },
         { cn: "谢谢", py: "xièxie", kr_read: "씨에씨에", kr: "감사합니다" },
         { cn: "对不起", py: "duìbuqǐ", kr_read: "뚜이부치", kr: "죄송합니다" },
         { cn: "好的", py: "hǎode", kr_read: "하오더", kr: "좋아요 / 알겠습니다" },
         { cn: "不用了", py: "búyòngle", kr_read: "부용러", kr: "괜찮습니다 / 필요없어요" }
     ],
+    "호텔/숙박": [
+        { cn: "我有预订", py: "wǒ yǒu yùdìng", kr_read: "워 요우 위딩", kr: "예약했습니다" },
+        { cn: "我要办理入住", py: "wǒ yào bànlǐ rùzhù", kr_read: "워 야오 판리 루주", kr: "체크인 할게요" },
+        { cn: "我要退房", py: "wǒ yào tuìfáng", kr_read: "워 야오 퇴이팡", kr: "체크아웃 할게요" },
+        { cn: "可以寄存行李吗?", py: "kěyǐ jìcún xíngli ma?", kr_read: "커이 지츈 싱리 마?", kr: "짐 좀 맡길 수 있나요?" },
+        { cn: "取行李", py: "qǔ xíngli", kr_read: "취 싱리", kr: "맡긴 짐 찾을게요" },
+        { cn: "Wi-Fi密码是多少?", py: "Wi-Fi mìmǎ shì duōshǎo?", kr_read: "와이파이 미마 쓰 뚜오샤오?", kr: "와이파이 비밀번호가 뭐예요?" },
+        { cn: "请换一下床单", py: "qǐng huàn yíxià chuángdān", kr_read: "칭 후안 이시아 추앙단", kr: "침대 시트 좀 바꿔주세요" },
+        { cn: "请打扫一下房间", py: "qǐng dǎsǎo yíxià fángjiān", kr_read: "칭 따사오 이시아 팡지앤", kr: "방 청소 좀 해주세요" },
+        { cn: "没有热水", py: "méiyǒu rèshuǐ", kr_read: "메이요우 러슈이", kr: "따뜻한 물이 안 나와요" }
+    ],
     "식당/주문": [
-        { cn: "不要香菜", py: "búyào xiāngcài", kr_read: "부야오 샹차이", kr: "★고수 빼주세요" },
+        { cn: "不要香菜", py: "búyào xiāngcài", kr_read: "부야오 샹차이", kr: "고수 빼주세요" },
         { cn: "买单", py: "mǎidān", kr_read: "마이딴", kr: "계산할게요" },
         { cn: "我要这个", py: "wǒ yào zhège", kr_read: "워 야오 저거", kr: "이거 하나 주세요" },
         { cn: "点单", py: "diǎndān", kr_read: "디앤딴", kr: "주문할게요" },
