@@ -680,19 +680,21 @@ function renderReservationQR(idx, btn) {
     const item = window.qrData[idx];
     if (!item) return;
 
-    let htmlH = `<div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn || ''}</div><span class="label-small">주소</span><div class="content-text" onclick="copy('${item.addr}')">${item.addr}</div>`;
+    // 1. 헤더에서 주소 관련 내용 삭제 (타이틀만 남김)
+    let htmlH = `<div class="kr-med">${item.kr}</div><div class="cn-big">${item.cn || ''}</div>`;
     
     let htmlB = "";
     Object.keys(item).forEach(key => {
         if (['kr', 'cn', 'addr', 'sub'].includes(key)) return;
         if (key === 'qrs') {
+            // 2. 확대 기능(onclick) 제거, 크게보기 텍스트 제거, 이름 위치를 QR 이미지 아래로 이동
             htmlB += `<div class="qr-slider-container">` + item.qrs.map(q => `
                 <div class="qr-card">
-                    <div class="qr-owner-name">${q.name || "미지정"}</div>
-                    <div class="qr-img-box" onclick="openZoom('${q.src}')">
-                        <img src="${q.src}"><div style="font-size:11px; color:#ff4757; margin-top:10px; font-weight:bold;">🔍 크게보기</div>
+                    <div class="qr-img-box">
+                        <img src="${q.src}">
                     </div>
-                </div>`).join('') + `</div><div class="qr-indicator">◀ 좌우로 밀어서 4명 확인 ▶</div>`;
+                    <div class="qr-owner-name">${q.name || "미지정"}</div>
+                </div>`).join('') + `</div>`; // 3. 하단 인디케이터(옆으로 넘기면..) 텍스트 삭제
         } 
         else if (key.startsWith('desc')) {
             if (key !== 'desc') htmlB += `<div style="margin-top:20px; border-top:1px dashed #eee; padding-top:20px;"></div>`;
