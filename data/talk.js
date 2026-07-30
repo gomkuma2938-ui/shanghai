@@ -48,7 +48,7 @@ window.talkData = {
     ],
     "관광지/입장": [
         { cn: "我有预订", py: "wǒ yǒu yùdìng", kr_read: "워 요우 위딩", kr: "예약했습니다" },
-        { cn: "帮 우리 拍张照吧", py: "bāng wǒmen pāi zhāng zhào ba", kr_read: "빵 워먼 파이 짱 쨔오바", kr: "저희 사진 좀 찍어주세요" },
+        { cn: "帮我们拍张照吧", py: "bāng wǒmen pāi zhāng zhào ba", kr_read: "빵 워먼 파이 짱 쨔오바", kr: "저희 사진 좀 찍어주세요" }
         { cn: "买四张成人票", py: "mǎi sì zhāng chéngrén piào", kr_read: "마이 쓰 짱 청런 피아오", kr: "어른 4명 표 주세요" },
         { cn: "三张成人票, 一张老人票", py: "sān zhāng chéngrén piào, yī zhāng lǎorén piào", kr_read: "산 짱 청런 피아오, 이 짱 라오런 피아오", kr: "성인 3장, 경로 1장 주세요" }
     ],
